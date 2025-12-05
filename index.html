@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FitZone Challenge - Powerlifting Competition</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <style>
         * {
@@ -14,7 +14,7 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-family: 'Bebas Neue', -apple-system, BlinkMacSystemFont, sans-serif;
             background-color: #0a0a0a;
             color: #ffffff;
             overflow-x: hidden;
@@ -241,14 +241,15 @@
         .auth-modal {
             background: rgba(26, 26, 26, 0.95);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 8px;
             padding: 3rem;
             width: 90%;
             max-width: 450px;
             position: relative;
             animation: fadeInUp 0.4s ease-out;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            transform: rotate(0.5deg);
         }
 
         .modal-close {
@@ -305,7 +306,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border-bottom: 2px solid transparent;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Bebas Neue', sans-serif;
         }
 
         .auth-tab.active {
@@ -339,18 +340,18 @@
             width: 100%;
             padding: 0.875rem 1rem;
             background: rgba(15, 15, 15, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
             color: #ffffff;
             font-size: 1rem;
             transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Bebas Neue', sans-serif;
         }
 
         .form-group input:focus {
             outline: none;
             border-color: #e63946;
-            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
+            box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.2);
         }
 
         .exercise-inputs {
@@ -364,7 +365,7 @@
             padding: 1rem;
             background: #e63946;
             border: none;
-            border-radius: 8px;
+            border-radius: 4px;
             color: #ffffff;
             font-size: 1rem;
             font-weight: 700;
@@ -372,13 +373,14 @@
             letter-spacing: 1px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Bebas Neue', sans-serif;
             margin-top: 0.5rem;
+            transform: rotate(-0.5deg);
         }
 
         .auth-btn:hover {
             background: #d62839;
-            transform: translateY(-2px);
+            transform: translateY(-2px) rotate(0deg);
             box-shadow: 0 8px 25px rgba(230, 57, 70, 0.3);
         }
 
@@ -419,7 +421,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Bebas Neue', sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -447,11 +449,12 @@
         }
 
         /* Dashboard Modal */
+        /* Dashboard Modal */
         .dashboard-modal {
             background: rgba(26, 26, 26, 0.95);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
             padding: 3rem;
             width: 90%;
             max-width: 1200px;
@@ -460,6 +463,7 @@
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             max-height: 90vh;
             overflow-y: auto;
+            transform: rotate(-0.5deg);
         }
 
         .dashboard-header {
@@ -487,7 +491,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Bebas Neue', sans-serif;
         }
 
         .logout-btn:hover {
@@ -553,12 +557,13 @@
 
         .achievement-card {
             background: rgba(15, 15, 15, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            border-radius: 6px;
             padding: 1.25rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            transform: rotate(0.3deg);
         }
 
         .achievement-card .exercise-name {
@@ -618,7 +623,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             border-bottom: 2px solid transparent;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Bebas Neue', sans-serif;
         }
 
         .method-tab.active {
@@ -662,7 +667,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Bebas Neue', sans-serif;
         }
 
         .camera-controls button.active {
@@ -753,7 +758,7 @@
             letter-spacing: 1px;
             cursor: pointer;
             transition: all 0.3s ease;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Bebas Neue', sans-serif;
             margin-top: 1rem;
         }
 
@@ -811,7 +816,7 @@
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Bebas Neue', sans-serif;
         }
 
         .tab-btn.active {
@@ -908,8 +913,9 @@
             background: rgba(26, 26, 26, 0.8);
             backdrop-filter: blur(10px);
             padding: 2rem;
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            border: 2px solid rgba(255, 255, 255, 0.15);
+            transform: rotate(-0.5deg);
         }
 
         .stat-card h3 {
@@ -1218,6 +1224,77 @@
         </div>
     </section>
 
+    <!-- Community Section -->
+    <section class="leaderboard-section scroll-animate" style="background: linear-gradient(rgba(10, 10, 10, 0.95), rgba(10, 10, 10, 0.95)), url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1600&q=80') center/cover fixed;">
+        <div class="leaderboard-container">
+            <h2 class="section-title">Community</h2>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-top: 3rem;">
+                <div class="stat-card">
+                    <h3>Active Lifters</h3>
+                    <div class="stat-value" id="activeLifters">0</div>
+                    <p style="color: #999; font-size: 0.875rem; margin-top: 0.5rem;">competing this week</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Workouts Logged</h3>
+                    <div class="stat-value" id="totalWorkouts">0</div>
+                    <p style="color: #999; font-size: 0.875rem; margin-top: 0.5rem;">since challenge started</p>
+                </div>
+                <div class="stat-card">
+                    <h3>Records Broken</h3>
+                    <div class="stat-value" id="recordsBroken">0</div>
+                    <p style="color: #999; font-size: 0.875rem; margin-top: 0.5rem;">personal bests achieved</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 3rem; padding: 2rem; background: rgba(26, 26, 26, 0.8); border-radius: 12px; border: 2px solid rgba(255, 255, 255, 0.1);">
+                <h3 style="font-size: 1.5rem; margin-bottom: 1.5rem; color: #e63946;">RECENT ACTIVITY</h3>
+                <div id="recentActivity" style="display: flex; flex-direction: column; gap: 1rem;">
+                    <div style="padding: 1rem; background: rgba(15, 15, 15, 0.8); border-left: 3px solid #e63946; transform: rotate(-0.3deg);">
+                        <div style="font-size: 0.875rem; color: #999;">2 minutes ago</div>
+                        <div style="font-size: 1rem; color: #fff; margin-top: 0.25rem;">Sarah J. hit a new squat PR: 225 lbs</div>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(15, 15, 15, 0.8); border-left: 3px solid #f77f00; transform: rotate(0.2deg);">
+                        <div style="font-size: 0.875rem; color: #999;">15 minutes ago</div>
+                        <div style="font-size: 1rem; color: #fff; margin-top: 0.25rem;">Mike D. logged 495 lbs deadlift</div>
+                    </div>
+                    <div style="padding: 1rem; background: rgba(15, 15, 15, 0.8); border-left: 3px solid #06ffa5; transform: rotate(-0.2deg);">
+                        <div style="font-size: 0.875rem; color: #999;">1 hour ago</div>
+                        <div style="font-size: 1rem; color: #fff; margin-top: 0.25rem;">John S. completed 5x5 bench press at 225 lbs</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Milestones Section -->
+    <section class="stats-section scroll-animate" style="background: linear-gradient(rgba(17, 17, 17, 0.95), rgba(17, 17, 17, 0.95)), url('https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1600&q=80') center/cover fixed;">
+        <div class="stats-container">
+            <h2 class="section-title">Challenge Milestones</h2>
+            <div style="display: grid; gap: 2rem; margin-top: 3rem;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1.5rem;">
+                    <div style="padding: 2rem; background: rgba(26, 26, 26, 0.8); border: 2px dashed rgba(230, 57, 70, 0.3); border-radius: 6px; text-align: center; transform: rotate(-1deg);">
+                        <div style="font-size: 3rem; color: #e63946; font-weight: bold; margin-bottom: 0.5rem;">1000+</div>
+                        <div style="font-size: 0.875rem; color: #999; text-transform: uppercase; letter-spacing: 1px;">Pounds Lifted Today</div>
+                    </div>
+                    <div style="padding: 2rem; background: rgba(26, 26, 26, 0.8); border: 2px dashed rgba(247, 127, 0, 0.3); border-radius: 6px; text-align: center; transform: rotate(0.5deg);">
+                        <div style="font-size: 3rem; color: #f77f00; font-weight: bold; margin-bottom: 0.5rem;">50+</div>
+                        <div style="font-size: 0.875rem; color: #999; text-transform: uppercase; letter-spacing: 1px;">Active Competitors</div>
+                    </div>
+                    <div style="padding: 2rem; background: rgba(26, 26, 26, 0.8); border: 2px dashed rgba(6, 255, 165, 0.3); border-radius: 6px; text-align: center; transform: rotate(-0.7deg);">
+                        <div style="font-size: 3rem; color: #06ffa5; font-weight: bold; margin-bottom: 0.5rem;">100+</div>
+                        <div style="font-size: 0.875rem; color: #999; text-transform: uppercase; letter-spacing: 1px;">Sets Completed</div>
+                    </div>
+                </div>
+
+                <div style="padding: 2.5rem; background: rgba(230, 57, 70, 0.1); border: 3px solid rgba(230, 57, 70, 0.3); border-radius: 8px; text-align: center; transform: rotate(0.3deg);">
+                    <h3 style="font-size: 2rem; color: #e63946; margin-bottom: 1rem;">CURRENT TOP LIFTER</h3>
+                    <div style="font-size: 3rem; color: #fff; font-weight: bold; margin-bottom: 0.5rem;">MIKE DAVIS</div>
+                    <div style="font-size: 1.25rem; color: #999;">19,365 lbs total volume</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Stats Section -->
     <section class="stats-section scroll-animate" id="stats">
         <div class="stats-container">
@@ -1247,7 +1324,7 @@
 
     <!-- Global Error Banner -->
     <div class="global-error-banner" id="globalErrorBanner">
-        <p>⚠️ Connecting to Firestore...</p>
+        <p>WARNING: Connecting to Firestore...</p>
         <button class="banner-close" id="closeBanner">&times;</button>
     </div>
 
@@ -1283,8 +1360,8 @@
                 <h3>Log New Achievement</h3>
                 
                 <div class="logging-methods">
-                    <button class="method-tab active" data-method="camera">🎥 AI Counter</button>
-                    <button class="method-tab" data-method="manual">✍️ Manual Entry</button>
+                    <button class="method-tab active" data-method="camera">AI Counter</button>
+                    <button class="method-tab" data-method="manual">Manual Entry</button>
                 </div>
 
                 <div class="success-message-dashboard" id="successMessageDashboard">Achievement saved successfully!</div>
@@ -1314,6 +1391,11 @@
                             </div>
 
                             <div id="cameraStatus">Loading AI model...</div>
+                            
+                            <div style="margin-top: 1rem; padding: 1rem; background: rgba(230, 57, 70, 0.1); border: 2px dashed rgba(230, 57, 70, 0.3); border-radius: 4px; text-align: center;">
+                                <div style="font-size: 0.875rem; color: #e63946; font-weight: bold; margin-bottom: 0.5rem;">RAISE PALM TO ADD SET</div>
+                                <div style="font-size: 0.75rem; color: #999;">Show palm like high-five to increment sets and reset reps</div>
+                            </div>
                         </div>
 
                         <!-- Right: Save Form -->
@@ -1321,9 +1403,9 @@
                             <h4 style="font-size: 1.1rem; margin-bottom: 1rem; color: #fff;">Save Your Set</h4>
                             
                             <div class="form-group">
-                                <label>Detected Reps</label>
-                                <input type="number" id="cameraRepsInput" value="0" readonly 
-                                       style="background: rgba(230, 57, 70, 0.1); border-color: rgba(230, 57, 70, 0.3);">
+                                <label>Detected Reps (editable)</label>
+                                <input type="number" id="cameraRepsInput" value="0" min="0"
+                                       style="background: rgba(15, 15, 15, 0.8); border: 2px solid rgba(230, 57, 70, 0.3);">
                             </div>
 
                             <div class="form-group">
@@ -1332,24 +1414,14 @@
                             </div>
 
                             <div class="form-group">
-                                <label for="cameraSets">Number of Sets</label>
-                                <input type="number" id="cameraSets" value="1" min="1">
+                                <label for="cameraSets">Current Sets</label>
+                                <input type="number" id="cameraSets" value="1" min="1" readonly
+                                       style="background: rgba(15, 15, 15, 0.8); border: 2px solid rgba(255, 255, 255, 0.2);">
                             </div>
 
                             <button type="button" class="save-camera-btn" id="saveCameraAchievement">
                                 Save Achievement
                             </button>
-
-                            <div style="margin-top: 2rem; padding: 1rem; background: rgba(15, 15, 15, 0.8); border-radius: 8px;">
-                                <h5 style="font-size: 0.875rem; color: #999; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">How It Works</h5>
-                                <ol style="font-size: 0.875rem; color: #888; line-height: 1.6; padding-left: 1.25rem; margin: 0;">
-                                    <li>Select your exercise</li>
-                                    <li>Position camera to see full body</li>
-                                    <li>Perform reps (AI counts automatically)</li>
-                                    <li>Enter weight and sets</li>
-                                    <li>Click "Save Achievement"</li>
-                                </ol>
-                            </div>
                         </div>
                     </div>
                 </div>
@@ -1684,7 +1756,7 @@
                     if (banner) {
                         const projectId = firebaseConfig.projectId || 'your-project';
                         banner.innerHTML = `
-                            <p>⚠️ Firestore API is not enabled. <a href="https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=${projectId}" target="_blank">Click here to enable it</a> then refresh the page.</p>
+                            <p>WARNING: Firestore API is not enabled. <a href="https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=${projectId}" target="_blank">Click here to enable it</a> then refresh the page.</p>
                             <button class="banner-close" onclick="document.getElementById('globalErrorBanner').classList.remove('show')">&times;</button>
                         `;
                         banner.classList.add('show');
@@ -1986,7 +2058,7 @@
                 // Show success message
                 const successMsg = document.getElementById('successMessageDashboard');
                 if (isNewRecord) {
-                    successMsg.textContent = 'New record saved successfully! 🎉';
+                    successMsg.textContent = 'New record saved successfully! ';
                 } else {
                     successMsg.textContent = 'Achievement logged (not a new record)';
                 }
@@ -2046,7 +2118,7 @@
                 // Show success message
                 const successMsg = document.getElementById('successMessageDashboard');
                 if (isNewRecord) {
-                    successMsg.textContent = 'New record saved successfully! 🎉';
+                    successMsg.textContent = 'New record saved successfully! ';
                 } else {
                     successMsg.textContent = 'Achievement logged (not a new record)';
                 }
@@ -2055,6 +2127,8 @@
 
                 // Reset camera counter and form
                 window.cameraExerciseData.reset();
+                currentSets = 1;
+                updateSetsDisplay();
                 document.getElementById('cameraWeight').value = '';
                 document.getElementById('cameraSets').value = '1';
 
@@ -2246,9 +2320,10 @@
 
     <!-- MediaPipe Camera Counter -->
     <script type="module">
-        import { PoseLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
+        import { PoseLandmarker, HandLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
         
         let poseLandmarker;
+        let handLandmarker;
         let webcamRunning = false;
         let lastVideoTime = -1;
         
@@ -2259,11 +2334,17 @@
         // Exercise tracking
         let currentCameraExercise = 'squat';
         let cameraCount = 0;
+        let currentSets = 1;
         let isDown = false;
         let currentAngle = 0;
         let repDetected = false;
         let repDetectedTime = 0;
         let lastRepTime = 0;
+        
+        // Palm detection
+        let palmRaised = false;
+        let lastPalmTime = 0;
+        const PALM_COOLDOWN = 2000; // 2 seconds between palm detections
         
         // Smoothing for stable detection
         let angleHistory = [];
@@ -2299,6 +2380,7 @@
                     "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
                 );
                 
+                // Initialize pose landmarker
                 poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
                     baseOptions: {
                         modelAssetPath: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",
@@ -2306,6 +2388,16 @@
                     },
                     runningMode: "VIDEO",
                     numPoses: 1
+                });
+                
+                // Initialize hand landmarker for palm detection
+                handLandmarker = await HandLandmarker.createFromOptions(vision, {
+                    baseOptions: {
+                        modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+                        delegate: "GPU"
+                    },
+                    runningMode: "VIDEO",
+                    numHands: 2
                 });
                 
                 document.getElementById('cameraStatus').textContent = 'Starting camera...';
@@ -2322,12 +2414,12 @@
                 
                 video.addEventListener('loadeddata', () => {
                     webcamRunning = true;
-                    document.getElementById('cameraStatus').textContent = '✓ Ready! Perform exercises to count reps.';
+                    document.getElementById('cameraStatus').textContent = 'Ready! Raise palm for new set.';
                     predictWebcam();
                 });
             } catch (error) {
                 console.error('Camera initialization error:', error);
-                document.getElementById('cameraStatus').textContent = '❌ Error: ' + error.message;
+                document.getElementById('cameraStatus').textContent = 'Error: ' + error.message;
             }
         };
         
@@ -2339,17 +2431,27 @@
                 lastVideoTime = video.currentTime;
                 
                 try {
-                    const results = await poseLandmarker.detectForVideo(video, startTimeMs);
+                    // Detect pose
+                    const poseResults = await poseLandmarker.detectForVideo(video, startTimeMs);
+                    
+                    // Detect hands
+                    const handResults = await handLandmarker.detectForVideo(video, startTimeMs);
                     
                     ctx.save();
                     ctx.clearRect(0, 0, canvas.width, canvas.height);
                     
-                    if (results.landmarks && results.landmarks.length > 0) {
-                        const landmarks = results.landmarks[0];
+                    // Process pose
+                    if (poseResults.landmarks && poseResults.landmarks.length > 0) {
+                        const landmarks = poseResults.landmarks[0];
                         drawSkeleton(landmarks);
                         drawLandmarks(landmarks);
                         countExercise(landmarks);
                         drawDebug(landmarks);
+                    }
+                    
+                    // Process hand for palm detection
+                    if (handResults.landmarks && handResults.landmarks.length > 0) {
+                        detectPalmGesture(handResults.landmarks);
                     }
                     
                     ctx.restore();
@@ -2363,6 +2465,55 @@
             }
             
             window.requestAnimationFrame(predictWebcam);
+        }
+        
+        function detectPalmGesture(handsLandmarks) {
+            // Check if enough time has passed since last palm detection
+            if (Date.now() - lastPalmTime < PALM_COOLDOWN) return;
+            
+            for (const handLandmarks of handsLandmarks) {
+                // Check if palm is raised (open hand)
+                // Landmarks: 0=wrist, 4=thumb tip, 8=index tip, 12=middle tip, 16=ring tip, 20=pinky tip
+                const wrist = handLandmarks[0];
+                const thumbTip = handLandmarks[4];
+                const indexTip = handLandmarks[8];
+                const middleTip = handLandmarks[12];
+                const ringTip = handLandmarks[16];
+                const pinkyTip = handLandmarks[20];
+                
+                // Check if all fingertips are above wrist (raised hand)
+                const fingersUp = 
+                    indexTip.y < wrist.y &&
+                    middleTip.y < wrist.y &&
+                    ringTip.y < wrist.y &&
+                    pinkyTip.y < wrist.y &&
+                    thumbTip.y < wrist.y;
+                
+                if (fingersUp && !palmRaised) {
+                    palmRaised = true;
+                    lastPalmTime = Date.now();
+                    
+                    // Increment sets and reset reps
+                    currentSets++;
+                    cameraCount = 0;
+                    updateCameraCount();
+                    updateSetsDisplay();
+                    
+                    // Visual feedback
+                    document.getElementById('cameraStatus').textContent = 'SET ' + currentSets + ' STARTED! Reps reset.';
+                    setTimeout(() => {
+                        document.getElementById('cameraStatus').textContent = 'Ready! Raise palm for new set.';
+                    }, 2000);
+                    
+                    console.log('Palm detected! Set incremented to:', currentSets);
+                } else if (!fingersUp) {
+                    palmRaised = false;
+                }
+            }
+        }
+        
+        function updateSetsDisplay() {
+            document.getElementById('cameraSets').value = currentSets;
         }
         
         function drawLandmarks(landmarks) {
@@ -2529,13 +2680,13 @@
             let html = `
                 <div style="color: white; font-size: 11px;">
                     <strong>Angle:</strong> ${currentAngle.toFixed(1)}°<br>
-                    <strong>State:</strong> ${isDown ? '🔴 DOWN' : '🟢 UP'}<br>
+                    <strong>State:</strong> ${isDown ? 'DOWN' : 'UP'}<br>
                     <strong>Reps:</strong> ${cameraCount}
                 </div>
             `;
             
             if (landmarks.length < 20) {
-                html += '<div style="color: red; font-weight: bold; margin-top: 3px; font-size: 10px;">⚠️ Step back!</div>';
+                html += '<div style="color: red; font-weight: bold; margin-top: 3px; font-size: 10px;">STEP BACK - NEED FULL BODY</div>';
             }
             
             debugDiv.innerHTML = html;
@@ -2574,10 +2725,12 @@
         
         document.getElementById('cameraResetBtn').addEventListener('click', () => {
             cameraCount = 0;
+            currentSets = 1;
             isDown = false;
             lastRepTime = 0;
             angleHistory = [];
             updateCameraCount();
+            updateSetsDisplay();
         });
         
         // Tab switching
