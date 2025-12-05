@@ -353,6 +353,12 @@
             box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.1);
         }
 
+        .exercise-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
         .auth-btn {
             width: 100%;
             padding: 1rem;
@@ -438,6 +444,159 @@
 
         .error-message.show {
             display: block;
+        }
+
+        /* Dashboard Modal */
+        .dashboard-modal {
+            background: rgba(26, 26, 26, 0.95);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            padding: 3rem;
+            width: 90%;
+            max-width: 600px;
+            position: relative;
+            animation: fadeInUp 0.4s ease-out;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-header h2 {
+            font-size: 2rem;
+            color: #ffffff;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin: 0;
+        }
+
+        .logout-btn {
+            padding: 0.5rem 1rem;
+            background: rgba(230, 57, 70, 0.1);
+            border: 1px solid rgba(230, 57, 70, 0.3);
+            border-radius: 8px;
+            color: #e63946;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .logout-btn:hover {
+            background: rgba(230, 57, 70, 0.2);
+            border-color: #e63946;
+        }
+
+        .user-stats {
+            background: rgba(15, 15, 15, 0.8);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .user-stats h3 {
+            font-size: 0.875rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 1rem;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-item .label {
+            font-size: 0.75rem;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-item .value {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #e63946;
+        }
+
+        .achievement-section {
+            margin-bottom: 2rem;
+        }
+
+        .achievement-section h3 {
+            font-size: 1.25rem;
+            color: #ffffff;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+
+        .current-achievements {
+            display: grid;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .achievement-card {
+            background: rgba(15, 15, 15, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1.25rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .achievement-card .exercise-name {
+            font-size: 0.875rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .achievement-card .exercise-stats {
+            font-size: 1.25rem;
+            color: #ffffff;
+            font-weight: 700;
+        }
+
+        .achievement-card .volume {
+            font-size: 1rem;
+            color: #e63946;
+            font-weight: 700;
+        }
+
+        .success-message-dashboard {
+            display: none;
+            padding: 0.875rem;
+            background: rgba(68, 255, 68, 0.1);
+            border: 1px solid rgba(68, 255, 68, 0.3);
+            border-radius: 8px;
+            color: #44ff44;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+
+        .success-message-dashboard.show {
+            display: block;
+            animation: fadeIn 0.3s ease-out;
         }
 
 
@@ -784,10 +943,10 @@
             <h2 class="section-title">Leaderboard</h2>
             
             <div class="leaderboard-tabs">
-                <button class="tab-btn active" onclick="switchTab('squat')">Squat</button>
-                <button class="tab-btn" onclick="switchTab('deadlift')">Deadlift</button>
-                <button class="tab-btn" onclick="switchTab('benchpress')">Bench Press</button>
-                <button class="tab-btn" onclick="switchTab('overall')">Overall</button>
+                <button class="tab-btn active" onclick="window.switchTab('squat')">Squat</button>
+                <button class="tab-btn" onclick="window.switchTab('deadlift')">Deadlift</button>
+                <button class="tab-btn" onclick="window.switchTab('benchpress')">Bench Press</button>
+                <button class="tab-btn" onclick="window.switchTab('overall')">Overall</button>
             </div>
 
             <div class="leaderboard-table">
@@ -836,6 +995,94 @@
             </div>
         </div>
     </section>
+
+    <!-- Dashboard Modal -->
+    <div class="modal-overlay" id="dashboardModal">
+        <div class="dashboard-modal">
+            <button class="modal-close" id="closeDashboard">&times;</button>
+            
+            <div class="dashboard-header">
+                <h2>My Dashboard</h2>
+                <button class="logout-btn" id="logoutBtn">Sign Out</button>
+            </div>
+
+            <div class="user-stats">
+                <h3>Your Best Lifts</h3>
+                <div class="stats-row">
+                    <div class="stat-item">
+                        <div class="label">Squat</div>
+                        <div class="value" id="userSquat">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="label">Deadlift</div>
+                        <div class="value" id="userDeadlift">-</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="label">Bench</div>
+                        <div class="value" id="userBench">-</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="achievement-section">
+                <h3>Log New Achievement</h3>
+                <div class="success-message-dashboard" id="successMessageDashboard">Achievement saved successfully!</div>
+                <form id="dashboardAchievementForm">
+                    <div class="form-group">
+                        <label for="dashboardExercise">Exercise Type</label>
+                        <select id="dashboardExercise" required>
+                            <option value="">Select Exercise</option>
+                            <option value="squat">Squat</option>
+                            <option value="deadlift">Deadlift</option>
+                            <option value="benchpress">Bench Press</option>
+                        </select>
+                    </div>
+
+                    <div class="exercise-inputs">
+                        <div class="form-group">
+                            <label for="dashboardWeight">Weight (lbs)</label>
+                            <input type="number" id="dashboardWeight" required placeholder="0" min="0" step="0.5">
+                        </div>
+                        <div class="form-group">
+                            <label for="dashboardSets">Sets</label>
+                            <input type="number" id="dashboardSets" required placeholder="0" min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="dashboardReps">Reps</label>
+                            <input type="number" id="dashboardReps" required placeholder="0" min="1">
+                        </div>
+                    </div>
+
+                    <button type="submit" class="auth-btn">Save Achievement</button>
+                </form>
+            </div>
+
+            <div class="current-achievements">
+                <h3 style="font-size: 1rem; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem;">Current Records</h3>
+                <div class="achievement-card">
+                    <div>
+                        <div class="exercise-name">Squat</div>
+                        <div class="exercise-stats" id="squatStats">Not logged</div>
+                    </div>
+                    <div class="volume" id="squatVolume">-</div>
+                </div>
+                <div class="achievement-card">
+                    <div>
+                        <div class="exercise-name">Deadlift</div>
+                        <div class="exercise-stats" id="deadliftStats">Not logged</div>
+                    </div>
+                    <div class="volume" id="deadliftVolume">-</div>
+                </div>
+                <div class="achievement-card">
+                    <div>
+                        <div class="exercise-name">Bench Press</div>
+                        <div class="exercise-stats" id="benchStats">Not logged</div>
+                    </div>
+                    <div class="volume" id="benchVolume">-</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Auth Modal -->
     <div class="modal-overlay" id="authModal">
@@ -910,6 +1157,17 @@
             signOut,
             updateProfile
         } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { 
+            getFirestore, 
+            collection, 
+            doc, 
+            setDoc, 
+            getDoc,
+            getDocs,
+            query,
+            onSnapshot,
+            serverTimestamp 
+        } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
         // Firebase configuration - REPLACE WITH YOUR CONFIG
         const firebaseConfig = {
@@ -924,6 +1182,7 @@
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
         // Global variable to track current user
@@ -933,13 +1192,18 @@
         onAuthStateChanged(auth, (user) => {
             window.currentUser = user;
             updateAuthUI(user);
+            if (user) {
+                // Close auth modal if open
+                document.getElementById('authModal').classList.remove('active');
+                // Show dashboard modal
+                loadUserDashboard(user);
+            }
         });
 
         function updateAuthUI(user) {
             const authLink = document.getElementById('authLink');
             if (user) {
                 authLink.textContent = 'Dashboard';
-                // Could redirect to dashboard or show user info
             } else {
                 authLink.textContent = 'Sign Up / Dashboard';
             }
@@ -952,18 +1216,308 @@
             setTimeout(() => errorDiv.classList.remove('show'), 5000);
         }
 
+        // Load User Dashboard
+        async function loadUserDashboard(user) {
+            const userDocRef = doc(db, 'users', user.uid);
+            const userDoc = await getDoc(userDocRef);
+
+            if (userDoc.exists()) {
+                const data = userDoc.data();
+                const achievements = data.achievements || {};
+
+                // Update dashboard stats
+                document.getElementById('userSquat').textContent = achievements.squat ? `${achievements.squat.weight} lbs` : '-';
+                document.getElementById('userDeadlift').textContent = achievements.deadlift ? `${achievements.deadlift.weight} lbs` : '-';
+                document.getElementById('userBench').textContent = achievements.benchpress ? `${achievements.benchpress.weight} lbs` : '-';
+
+                // Update current records
+                updateRecordDisplay('squat', achievements.squat);
+                updateRecordDisplay('deadlift', achievements.deadlift);
+                updateRecordDisplay('benchpress', achievements.benchpress);
+            }
+        }
+
+        function updateRecordDisplay(exercise, achievement) {
+            const statsId = exercise === 'benchpress' ? 'benchStats' : `${exercise}Stats`;
+            const volumeId = exercise === 'benchpress' ? 'benchVolume' : `${exercise}Volume`;
+
+            if (achievement) {
+                document.getElementById(statsId).textContent = 
+                    `${achievement.weight} lbs × ${achievement.sets} sets × ${achievement.reps} reps`;
+                document.getElementById(volumeId).textContent = 
+                    `${achievement.totalVolume.toLocaleString()} lbs total`;
+            } else {
+                document.getElementById(statsId).textContent = 'Not logged';
+                document.getElementById(volumeId).textContent = '-';
+            }
+        }
+
+        // Save Achievement to Firestore
+        async function saveAchievement(user, exercise, weight, sets, reps) {
+            const totalVolume = weight * sets * reps;
+            const userDocRef = doc(db, 'users', user.uid);
+
+            const achievementData = {
+                weight: weight,
+                sets: sets,
+                reps: reps,
+                totalVolume: totalVolume,
+                timestamp: serverTimestamp()
+            };
+
+            // Get current user data
+            const userDoc = await getDoc(userDocRef);
+            
+            if (userDoc.exists()) {
+                const currentData = userDoc.data();
+                const currentAchievements = currentData.achievements || {};
+                
+                // Only update if this is better than current record
+                if (!currentAchievements[exercise] || totalVolume > currentAchievements[exercise].totalVolume) {
+                    currentAchievements[exercise] = achievementData;
+                    
+                    await setDoc(userDocRef, {
+                        displayName: user.displayName || user.email,
+                        email: user.email,
+                        achievements: currentAchievements
+                    }, { merge: true });
+                    
+                    return true;
+                } else {
+                    return false; // Not a new record
+                }
+            } else {
+                // First achievement for this user
+                await setDoc(userDocRef, {
+                    displayName: user.displayName || user.email,
+                    email: user.email,
+                    achievements: {
+                        [exercise]: achievementData
+                    }
+                });
+                return true;
+            }
+        }
+
+        // Load Leaderboard from Firestore with Real-Time Updates
+        function setupLeaderboardListeners() {
+            const usersRef = collection(db, 'users');
+            
+            onSnapshot(usersRef, (snapshot) => {
+                const allUsers = [];
+                
+                snapshot.forEach((doc) => {
+                    const userData = doc.data();
+                    if (userData.achievements) {
+                        allUsers.push({
+                            userId: doc.id,
+                            displayName: userData.displayName,
+                            achievements: userData.achievements
+                        });
+                    }
+                });
+
+                // Update the global leaderboard display
+                updateLeaderboardFromFirestore(allUsers);
+                updateStatsFromFirestore(allUsers);
+            });
+        }
+
+        function updateLeaderboardFromFirestore(users) {
+            // Store in window for tab switching
+            window.firestoreUsers = users;
+            
+            // Update current active tab
+            const activeTab = document.querySelector('.tab-btn.active');
+            if (activeTab) {
+                const exercise = activeTab.textContent.toLowerCase().replace(' ', '');
+                displayLeaderboardForExercise(exercise, users);
+            }
+        }
+
+        function displayLeaderboardForExercise(exercise, users) {
+            const tbody = document.getElementById('leaderboardBody');
+            let data = [];
+
+            if (exercise === 'overall') {
+                // Calculate overall scores
+                users.forEach(user => {
+                    let totalVolume = 0;
+                    let totalWeight = 0;
+                    let totalSets = 0;
+                    let totalReps = 0;
+
+                    ['squat', 'deadlift', 'benchpress'].forEach(ex => {
+                        if (user.achievements[ex]) {
+                            totalVolume += user.achievements[ex].totalVolume;
+                            totalWeight += user.achievements[ex].weight;
+                            totalSets += user.achievements[ex].sets;
+                            totalReps += user.achievements[ex].reps;
+                        }
+                    });
+
+                    if (totalVolume > 0) {
+                        data.push({
+                            name: user.displayName,
+                            weight: totalWeight,
+                            sets: totalSets,
+                            reps: totalReps,
+                            totalVolume: totalVolume
+                        });
+                    }
+                });
+            } else {
+                // Single exercise leaderboard
+                const exerciseKey = exercise === 'benchpress' ? 'benchpress' : exercise;
+                
+                users.forEach(user => {
+                    if (user.achievements[exerciseKey]) {
+                        const ach = user.achievements[exerciseKey];
+                        data.push({
+                            name: user.displayName,
+                            weight: ach.weight,
+                            sets: ach.sets,
+                            reps: ach.reps,
+                            totalVolume: ach.totalVolume
+                        });
+                    }
+                });
+            }
+
+            // Sort by total volume
+            data.sort((a, b) => b.totalVolume - a.totalVolume);
+
+            // Generate table rows
+            tbody.innerHTML = '';
+            data.forEach((item, index) => {
+                const row = document.createElement('tr');
+                const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank';
+                
+                row.innerHTML = `
+                    <td><span class="${rankClass}">${index + 1}</span></td>
+                    <td>${item.name}</td>
+                    <td>${item.weight} lbs</td>
+                    <td>${item.sets}</td>
+                    <td>${item.reps}</td>
+                    <td class="total-weight">${item.totalVolume.toLocaleString()} lbs</td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // If no data, show placeholder
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #888888; padding: 3rem;">No achievements logged yet. Be the first!</td></tr>';
+            }
+        }
+
+        // Make displayLeaderboardForExercise globally accessible
+        window.displayLeaderboardForExercise = displayLeaderboardForExercise;
+
+        function updateStatsFromFirestore(users) {
+            // Calculate total participants
+            const totalParticipants = users.length;
+            document.getElementById('totalParticipants').textContent = totalParticipants;
+
+            // Calculate total volume and exercise counts
+            let totalVolume = 0;
+            const exerciseCounts = { squat: 0, deadlift: 0, benchpress: 0 };
+            const exerciseVolumes = { squat: 0, deadlift: 0, benchpress: 0 };
+
+            users.forEach(user => {
+                ['squat', 'deadlift', 'benchpress'].forEach(exercise => {
+                    if (user.achievements[exercise]) {
+                        totalVolume += user.achievements[exercise].totalVolume;
+                        exerciseCounts[exercise]++;
+                        exerciseVolumes[exercise] += user.achievements[exercise].totalVolume;
+                    }
+                });
+            });
+
+            document.getElementById('totalVolume').textContent = totalVolume.toLocaleString();
+
+            // Update charts
+            updateChartsFromData(exerciseCounts, exerciseVolumes);
+        }
+
+        function updateChartsFromData(exerciseCounts, exerciseVolumes) {
+            // Participation chart
+            const ctx1 = document.getElementById('participationChart');
+            if (window.participationChart) window.participationChart.destroy();
+            
+            window.participationChart = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: ['Squat', 'Deadlift', 'Bench Press'],
+                    datasets: [{
+                        label: 'Participants',
+                        data: [exerciseCounts.squat, exerciseCounts.deadlift, exerciseCounts.benchpress],
+                        backgroundColor: ['#e63946', '#f77f00', '#06ffa5'],
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: { color: '#999' },
+                            grid: { color: 'rgba(255,255,255,0.05)' }
+                        },
+                        x: {
+                            ticks: { color: '#999' },
+                            grid: { display: false }
+                        }
+                    }
+                }
+            });
+
+            // Exercise distribution chart
+            const ctx2 = document.getElementById('exerciseChart');
+            if (window.exerciseChart) window.exerciseChart.destroy();
+
+            window.exerciseChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Squat', 'Deadlift', 'Bench Press'],
+                    datasets: [{
+                        data: [exerciseVolumes.squat, exerciseVolumes.deadlift, exerciseVolumes.benchpress],
+                        backgroundColor: ['#e63946', '#f77f00', '#06ffa5'],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#999', padding: 15 }
+                        }
+                    }
+                }
+            });
+        }
+
         // Modal controls
         const authModal = document.getElementById('authModal');
+        const dashboardModal = document.getElementById('dashboardModal');
         const authLink = document.getElementById('authLink');
         const closeModal = document.getElementById('closeModal');
+        const closeDashboard = document.getElementById('closeDashboard');
+        const logoutBtn = document.getElementById('logoutBtn');
 
         authLink.addEventListener('click', (e) => {
             e.preventDefault();
             if (window.currentUser) {
-                // User is logged in, show dashboard or user info
-                alert(`Welcome back, ${window.currentUser.displayName || window.currentUser.email}!`);
-                // Here you could redirect to a dashboard page or show user stats
+                // User is logged in, show dashboard
+                dashboardModal.classList.add('active');
+                loadUserDashboard(window.currentUser);
             } else {
+                // Show auth modal
                 authModal.classList.add('active');
             }
         });
@@ -972,9 +1526,76 @@
             authModal.classList.remove('active');
         });
 
+        closeDashboard.addEventListener('click', () => {
+            dashboardModal.classList.remove('active');
+        });
+
         authModal.addEventListener('click', (e) => {
             if (e.target === authModal) {
                 authModal.classList.remove('active');
+            }
+        });
+
+        dashboardModal.addEventListener('click', (e) => {
+            if (e.target === dashboardModal) {
+                dashboardModal.classList.remove('active');
+            }
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                dashboardModal.classList.remove('active');
+                alert('Signed out successfully!');
+            } catch (error) {
+                console.error('Sign out error:', error);
+                alert('Failed to sign out: ' + error.message);
+            }
+        });
+
+        // Dashboard Achievement Form
+        document.getElementById('dashboardAchievementForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            if (!window.currentUser) {
+                alert('Please sign in to log achievements');
+                return;
+            }
+
+            const exercise = document.getElementById('dashboardExercise').value;
+            const weight = parseFloat(document.getElementById('dashboardWeight').value);
+            const sets = parseInt(document.getElementById('dashboardSets').value);
+            const reps = parseInt(document.getElementById('dashboardReps').value);
+            const btn = e.target.querySelector('.auth-btn');
+
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            try {
+                const isNewRecord = await saveAchievement(window.currentUser, exercise, weight, sets, reps);
+                
+                // Show success message
+                const successMsg = document.getElementById('successMessageDashboard');
+                if (isNewRecord) {
+                    successMsg.textContent = 'New record saved successfully! 🎉';
+                } else {
+                    successMsg.textContent = 'Achievement logged (not a new record)';
+                }
+                successMsg.classList.add('show');
+                setTimeout(() => successMsg.classList.remove('show'), 3000);
+
+                // Reset form
+                e.target.reset();
+
+                // Reload user dashboard
+                await loadUserDashboard(window.currentUser);
+            } catch (error) {
+                console.error('Error saving achievement:', error);
+                alert('Failed to save achievement: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Achievement';
             }
         });
 
@@ -1013,9 +1634,16 @@
                 const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                 await updateProfile(userCredential.user, { displayName: displayName });
                 
+                // Create user document in Firestore
+                await setDoc(doc(db, 'users', userCredential.user.uid), {
+                    displayName: displayName,
+                    email: email,
+                    achievements: {},
+                    createdAt: serverTimestamp()
+                });
+                
                 authModal.classList.remove('active');
                 e.target.reset();
-                alert('Account created successfully! Welcome to FitZone!');
             } catch (error) {
                 console.error('Sign up error:', error);
                 let errorMessage = 'Failed to create account. ';
@@ -1055,7 +1683,6 @@
                 await signInWithEmailAndPassword(auth, email, password);
                 authModal.classList.remove('active');
                 e.target.reset();
-                alert('Welcome back to FitZone!');
             } catch (error) {
                 console.error('Login error:', error);
                 let errorMessage = 'Failed to sign in. ';
@@ -1088,9 +1715,22 @@
             btn.disabled = true;
             
             try {
-                await signInWithPopup(auth, googleProvider);
+                const result = await signInWithPopup(auth, googleProvider);
+                
+                // Check if user document exists, create if not
+                const userDocRef = doc(db, 'users', result.user.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (!userDoc.exists()) {
+                    await setDoc(userDocRef, {
+                        displayName: result.user.displayName || result.user.email,
+                        email: result.user.email,
+                        achievements: {},
+                        createdAt: serverTimestamp()
+                    });
+                }
+                
                 authModal.classList.remove('active');
-                alert('Welcome to FitZone!');
             } catch (error) {
                 console.error('Google sign in error:', error);
                 let errorMessage = 'Failed to sign in with Google. ';
@@ -1122,66 +1762,12 @@
                 alert('Failed to sign out: ' + error.message);
             }
         };
+
+        // Initialize Firestore listeners
+        setupLeaderboardListeners();
     </script>
 
     <script>
-        // Sample data storage
-        let achievements = {
-            squat: [],
-            deadlift: [],
-            benchpress: []
-        };
-
-        let participationChart = null;
-        let exerciseChart = null;
-
-        // Load from storage if available
-        const loadData = async () => {
-            try {
-                const stored = await window.storage.get('fitzone_achievements');
-                if (stored && stored.value) {
-                    achievements = JSON.parse(stored.value);
-                    updateLeaderboard('squat');
-                    updateStats();
-                }
-            } catch (error) {
-                // Key doesn't exist yet, use sample data
-                initializeSampleData();
-            }
-        };
-
-        const saveData = async () => {
-            try {
-                await window.storage.set('fitzone_achievements', JSON.stringify(achievements));
-            } catch (error) {
-                console.error('Failed to save data:', error);
-            }
-        };
-
-        // Initialize with sample data
-        const initializeSampleData = () => {
-            achievements = {
-                squat: [
-                    { name: 'John Smith', weight: 315, sets: 5, reps: 5, totalVolume: 7875 },
-                    { name: 'Sarah Johnson', weight: 225, sets: 5, reps: 5, totalVolume: 5625 },
-                    { name: 'Mike Davis', weight: 405, sets: 3, reps: 3, totalVolume: 3645 },
-                ],
-                deadlift: [
-                    { name: 'Mike Davis', weight: 495, sets: 3, reps: 3, totalVolume: 4455 },
-                    { name: 'John Smith', weight: 405, sets: 5, reps: 3, totalVolume: 6075 },
-                    { name: 'Sarah Johnson', weight: 275, sets: 5, reps: 5, totalVolume: 6875 },
-                ],
-                benchpress: [
-                    { name: 'John Smith', weight: 225, sets: 5, reps: 5, totalVolume: 5625 },
-                    { name: 'Mike Davis', weight: 315, sets: 3, reps: 3, totalVolume: 2835 },
-                    { name: 'Sarah Johnson', weight: 135, sets: 5, reps: 8, totalVolume: 5400 },
-                ]
-            };
-            saveData();
-            updateLeaderboard('squat');
-            updateStats();
-        };
-
         // Navbar scroll effect
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
@@ -1238,159 +1824,15 @@
         updateCountdown();
 
         // Switch Tabs
-        function switchTab(exercise) {
+        window.switchTab = function(exercise) {
             // Update active tab
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
 
-            // Update leaderboard
-            updateLeaderboard(exercise);
-        }
-
-        // Update Leaderboard
-        function updateLeaderboard(exercise) {
-            const tbody = document.getElementById('leaderboardBody');
-            let data = [];
-
-            if (exercise === 'overall') {
-                // Calculate overall scores
-                const overallScores = {};
-                ['squat', 'deadlift', 'benchpress'].forEach(ex => {
-                    achievements[ex].forEach(a => {
-                        if (!overallScores[a.name]) {
-                            overallScores[a.name] = { name: a.name, totalVolume: 0, weight: 0, sets: 0, reps: 0 };
-                        }
-                        overallScores[a.name].totalVolume += a.totalVolume;
-                        overallScores[a.name].weight += a.weight;
-                        overallScores[a.name].sets += a.sets;
-                        overallScores[a.name].reps += a.reps;
-                    });
-                });
-                data = Object.values(overallScores);
-            } else {
-                data = [...achievements[exercise]];
+            // Update leaderboard from Firestore data
+            if (window.firestoreUsers && window.displayLeaderboardForExercise) {
+                window.displayLeaderboardForExercise(exercise, window.firestoreUsers);
             }
-
-            // Sort by total volume
-            data.sort((a, b) => b.totalVolume - a.totalVolume);
-
-            // Generate table rows
-            tbody.innerHTML = '';
-            data.forEach((item, index) => {
-                const row = document.createElement('tr');
-                const rankClass = index === 0 ? 'rank-1' : index === 1 ? 'rank-2' : index === 2 ? 'rank-3' : 'rank';
-                
-                row.innerHTML = `
-                    <td><span class="${rankClass}">${index + 1}</span></td>
-                    <td>${item.name}</td>
-                    <td>${item.weight} lbs</td>
-                    <td>${item.sets}</td>
-                    <td>${item.reps}</td>
-                    <td class="total-weight">${item.totalVolume.toLocaleString()} lbs</td>
-                `;
-                tbody.appendChild(row);
-            });
-
-            // If no data, show placeholder
-            if (data.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #888888; padding: 3rem;">No achievements logged yet. Be the first!</td></tr>';
-            }
-        }
-
-        // Update Stats
-        function updateStats() {
-            // Calculate total participants
-            const allParticipants = new Set();
-            ['squat', 'deadlift', 'benchpress'].forEach(ex => {
-                achievements[ex].forEach(a => allParticipants.add(a.name));
-            });
-            
-            document.getElementById('totalParticipants').textContent = allParticipants.size;
-
-            // Calculate total volume
-            let totalVol = 0;
-            ['squat', 'deadlift', 'benchpress'].forEach(ex => {
-                achievements[ex].forEach(a => totalVol += a.totalVolume);
-            });
-            document.getElementById('totalVolume').textContent = totalVol.toLocaleString();
-
-            // Update charts
-            updateCharts();
-        }
-
-        // Update Charts
-        function updateCharts() {
-            // Participation over time chart (simplified to show exercise counts)
-            const ctx1 = document.getElementById('participationChart');
-            if (participationChart) participationChart.destroy();
-            
-            const exerciseCounts = {
-                squat: achievements.squat.length,
-                deadlift: achievements.deadlift.length,
-                benchpress: achievements.benchpress.length
-            };
-
-            participationChart = new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: ['Squat', 'Deadlift', 'Bench Press'],
-                    datasets: [{
-                        label: 'Participants',
-                        data: [exerciseCounts.squat, exerciseCounts.deadlift, exerciseCounts.benchpress],
-                        backgroundColor: ['#e63946', '#f77f00', '#06ffa5'],
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { color: '#999' },
-                            grid: { color: 'rgba(255,255,255,0.05)' }
-                        },
-                        x: {
-                            ticks: { color: '#999' },
-                            grid: { display: false }
-                        }
-                    }
-                }
-            });
-
-            // Exercise distribution pie chart
-            const ctx2 = document.getElementById('exerciseChart');
-            if (exerciseChart) exerciseChart.destroy();
-
-            let totalSquat = 0, totalDeadlift = 0, totalBench = 0;
-            achievements.squat.forEach(a => totalSquat += a.totalVolume);
-            achievements.deadlift.forEach(a => totalDeadlift += a.totalVolume);
-            achievements.benchpress.forEach(a => totalBench += a.totalVolume);
-
-            exerciseChart = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Squat', 'Deadlift', 'Bench Press'],
-                    datasets: [{
-                        data: [totalSquat, totalDeadlift, totalBench],
-                        backgroundColor: ['#e63946', '#f77f00', '#06ffa5'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: '#999', padding: 15 }
-                        }
-                    }
-                }
-            });
         }
 
         // Parallax Effect
@@ -1420,9 +1862,6 @@
         document.querySelectorAll('.scroll-animate').forEach(el => {
             observer.observe(el);
         });
-
-        // Initialize
-        loadData();
     </script>
 </body>
 </html>
