@@ -801,6 +801,79 @@
             transition: all 0.3s ease;
         }
 
+        /* Global Error Banner */
+        .global-error-banner {
+            display: none;
+            position: fixed;
+            top: 155px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            background: rgba(230, 57, 70, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            padding: 1rem 2rem;
+            padding-right: 3rem;
+            max-width: 90%;
+            width: auto;
+            box-shadow: 0 10px 40px rgba(230, 57, 70, 0.3);
+            animation: slideDown 0.3s ease-out;
+            position: relative;
+        }
+
+        .global-error-banner.show {
+            display: block;
+        }
+
+        .global-error-banner p {
+            color: #ffffff;
+            font-weight: 600;
+            margin: 0;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        .global-error-banner a {
+            color: #ffffff;
+            text-decoration: underline;
+            font-weight: 700;
+        }
+
+        .banner-close {
+            position: absolute;
+            top: 50%;
+            right: 0.75rem;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #ffffff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+
+        .banner-close:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
         @media (max-width: 768px) {
             .nav-container {
                 padding: 1.25rem 1.5rem;
@@ -996,6 +1069,12 @@
         </div>
     </section>
 
+    <!-- Global Error Banner -->
+    <div class="global-error-banner" id="globalErrorBanner">
+        <p>⚠️ Connecting to Firestore...</p>
+        <button class="banner-close" id="closeBanner">&times;</button>
+    </div>
+
     <!-- Dashboard Modal -->
     <div class="modal-overlay" id="dashboardModal">
         <div class="dashboard-modal">
@@ -1170,14 +1249,14 @@
         } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
         // Firebase configuration - REPLACE WITH YOUR CONFIG
-        const firebaseConfig = {
+            const firebaseConfig = {
             apiKey: "AIzaSyCkTEeWRXFH2N6Ttw0_ioP-cqImZFVbq5Q",
             authDomain: "fblatryouts.firebaseapp.com",
             projectId: "fblatryouts",
             storageBucket: "fblatryouts.firebasestorage.app",
             messagingSenderId: "337219854324",
             appId: "1:337219854324:web:799ebe988c8cf565a663a1"
-        };
+            };
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);
@@ -1218,22 +1297,41 @@
 
         // Load User Dashboard
         async function loadUserDashboard(user) {
-            const userDocRef = doc(db, 'users', user.uid);
-            const userDoc = await getDoc(userDocRef);
+            try {
+                const userDocRef = doc(db, 'users', user.uid);
+                const userDoc = await getDoc(userDocRef);
 
-            if (userDoc.exists()) {
-                const data = userDoc.data();
-                const achievements = data.achievements || {};
+                if (userDoc.exists()) {
+                    const data = userDoc.data();
+                    const achievements = data.achievements || {};
 
-                // Update dashboard stats
-                document.getElementById('userSquat').textContent = achievements.squat ? `${achievements.squat.weight} lbs` : '-';
-                document.getElementById('userDeadlift').textContent = achievements.deadlift ? `${achievements.deadlift.weight} lbs` : '-';
-                document.getElementById('userBench').textContent = achievements.benchpress ? `${achievements.benchpress.weight} lbs` : '-';
+                    // Update dashboard stats
+                    document.getElementById('userSquat').textContent = achievements.squat ? `${achievements.squat.weight} lbs` : '-';
+                    document.getElementById('userDeadlift').textContent = achievements.deadlift ? `${achievements.deadlift.weight} lbs` : '-';
+                    document.getElementById('userBench').textContent = achievements.benchpress ? `${achievements.benchpress.weight} lbs` : '-';
 
-                // Update current records
-                updateRecordDisplay('squat', achievements.squat);
-                updateRecordDisplay('deadlift', achievements.deadlift);
-                updateRecordDisplay('benchpress', achievements.benchpress);
+                    // Update current records
+                    updateRecordDisplay('squat', achievements.squat);
+                    updateRecordDisplay('deadlift', achievements.deadlift);
+                    updateRecordDisplay('benchpress', achievements.benchpress);
+                } else {
+                    // New user, set defaults
+                    document.getElementById('userSquat').textContent = '-';
+                    document.getElementById('userDeadlift').textContent = '-';
+                    document.getElementById('userBench').textContent = '-';
+                    updateRecordDisplay('squat', null);
+                    updateRecordDisplay('deadlift', null);
+                    updateRecordDisplay('benchpress', null);
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                if (error.code === 'unavailable') {
+                    // Show offline message
+                    const errorDiv = document.getElementById('errorMessage');
+                    errorDiv.textContent = 'Unable to load data. Please check your internet connection and make sure Firestore API is enabled.';
+                    errorDiv.classList.add('show');
+                    setTimeout(() => errorDiv.classList.remove('show'), 8000);
+                }
             }
         }
 
@@ -1317,9 +1415,30 @@
                     }
                 });
 
+                // Hide error banner if successful
+                const banner = document.getElementById('globalErrorBanner');
+                if (banner) {
+                    banner.classList.remove('show');
+                }
+
                 // Update the global leaderboard display
                 updateLeaderboardFromFirestore(allUsers);
                 updateStatsFromFirestore(allUsers);
+            }, (error) => {
+                console.error('Firestore listener error:', error);
+                
+                // Show global error banner
+                if (error.code === 'permission-denied' || error.code === 'unavailable') {
+                    const banner = document.getElementById('globalErrorBanner');
+                    if (banner) {
+                        const projectId = firebaseConfig.projectId || 'your-project';
+                        banner.innerHTML = `
+                            <p>⚠️ Firestore API is not enabled. <a href="https://console.developers.google.com/apis/api/firestore.googleapis.com/overview?project=${projectId}" target="_blank">Click here to enable it</a> then refresh the page.</p>
+                            <button class="banner-close" onclick="document.getElementById('globalErrorBanner').classList.remove('show')">&times;</button>
+                        `;
+                        banner.classList.add('show');
+                    }
+                }
             });
         }
 
@@ -1440,66 +1559,90 @@
         }
 
         function updateChartsFromData(exerciseCounts, exerciseVolumes) {
-            // Participation chart
-            const ctx1 = document.getElementById('participationChart');
-            if (window.participationChart) window.participationChart.destroy();
-            
-            window.participationChart = new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: ['Squat', 'Deadlift', 'Bench Press'],
-                    datasets: [{
-                        label: 'Participants',
-                        data: [exerciseCounts.squat, exerciseCounts.deadlift, exerciseCounts.benchpress],
-                        backgroundColor: ['#e63946', '#f77f00', '#06ffa5'],
-                        borderRadius: 8
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { display: false }
+            // Check if Chart.js is loaded
+            if (typeof Chart === 'undefined') {
+                console.warn('Chart.js not loaded yet, skipping chart update');
+                return;
+            }
+
+            try {
+                // Participation chart
+                const ctx1 = document.getElementById('participationChart');
+                if (!ctx1) {
+                    console.warn('participationChart canvas not found');
+                    return;
+                }
+
+                if (window.participationChart && typeof window.participationChart.destroy === 'function') {
+                    window.participationChart.destroy();
+                }
+                
+                window.participationChart = new Chart(ctx1, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Squat', 'Deadlift', 'Bench Press'],
+                        datasets: [{
+                            label: 'Participants',
+                            data: [exerciseCounts.squat, exerciseCounts.deadlift, exerciseCounts.benchpress],
+                            backgroundColor: ['#e63946', '#f77f00', '#06ffa5'],
+                            borderRadius: 8
+                        }]
                     },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: { color: '#999' },
-                            grid: { color: 'rgba(255,255,255,0.05)' }
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
                         },
-                        x: {
-                            ticks: { color: '#999' },
-                            grid: { display: false }
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                ticks: { color: '#999' },
+                                grid: { color: 'rgba(255,255,255,0.05)' }
+                            },
+                            x: {
+                                ticks: { color: '#999' },
+                                grid: { display: false }
+                            }
                         }
                     }
+                });
+
+                // Exercise distribution chart
+                const ctx2 = document.getElementById('exerciseChart');
+                if (!ctx2) {
+                    console.warn('exerciseChart canvas not found');
+                    return;
                 }
-            });
 
-            // Exercise distribution chart
-            const ctx2 = document.getElementById('exerciseChart');
-            if (window.exerciseChart) window.exerciseChart.destroy();
+                if (window.exerciseChart && typeof window.exerciseChart.destroy === 'function') {
+                    window.exerciseChart.destroy();
+                }
 
-            window.exerciseChart = new Chart(ctx2, {
-                type: 'doughnut',
-                data: {
-                    labels: ['Squat', 'Deadlift', 'Bench Press'],
-                    datasets: [{
-                        data: [exerciseVolumes.squat, exerciseVolumes.deadlift, exerciseVolumes.benchpress],
-                        backgroundColor: ['#e63946', '#f77f00', '#06ffa5'],
-                        borderWidth: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            position: 'bottom',
-                            labels: { color: '#999', padding: 15 }
+                window.exerciseChart = new Chart(ctx2, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Squat', 'Deadlift', 'Bench Press'],
+                        datasets: [{
+                            data: [exerciseVolumes.squat, exerciseVolumes.deadlift, exerciseVolumes.benchpress],
+                            backgroundColor: ['#e63946', '#f77f00', '#06ffa5'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: { color: '#999', padding: 15 }
+                            }
                         }
                     }
-                }
-            });
+                });
+            } catch (error) {
+                console.error('Error updating charts:', error);
+            }
         }
 
         // Modal controls
@@ -1763,11 +1906,26 @@
             }
         };
 
-        // Initialize Firestore listeners
-        setupLeaderboardListeners();
+        // Initialize Firestore listeners after DOM and Chart.js are ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => {
+                setTimeout(() => setupLeaderboardListeners(), 100);
+            });
+        } else {
+            // DOM already loaded
+            setTimeout(() => setupLeaderboardListeners(), 100);
+        }
     </script>
 
     <script>
+        // Close error banner
+        const closeBannerBtn = document.getElementById('closeBanner');
+        if (closeBannerBtn) {
+            closeBannerBtn.addEventListener('click', () => {
+                document.getElementById('globalErrorBanner').classList.remove('show');
+            });
+        }
+
         // Navbar scroll effect
         window.addEventListener('scroll', () => {
             const navbar = document.getElementById('navbar');
@@ -1789,8 +1947,15 @@
         // Smooth scroll
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
+                const href = this.getAttribute('href');
+                
+                // Skip if href is just "#" (like auth link)
+                if (href === '#' || href.length <= 1) {
+                    return;
+                }
+                
                 e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
+                const target = document.querySelector(href);
                 if (target) {
                     target.scrollIntoView({ behavior: 'smooth', block: 'start' });
                     document.getElementById('navLinks').classList.remove('active');
