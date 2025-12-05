@@ -454,7 +454,7 @@
             border-radius: 20px;
             padding: 3rem;
             width: 90%;
-            max-width: 600px;
+            max-width: 1200px;
             position: relative;
             animation: fadeInUp 0.4s ease-out;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
@@ -597,6 +597,182 @@
         .success-message-dashboard.show {
             display: block;
             animation: fadeIn 0.3s ease-out;
+        }
+
+        /* Camera Counter Styles */
+        .logging-methods {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 1rem;
+        }
+
+        .method-tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            color: #999;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 2px solid transparent;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .method-tab.active {
+            color: #e63946;
+            border-bottom-color: #e63946;
+        }
+
+        .logging-content {
+            display: none;
+        }
+
+        .logging-content.active {
+            display: block;
+        }
+
+        .split-view {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .camera-section {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .camera-controls {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .camera-controls button {
+            padding: 0.5rem 1rem;
+            background: rgba(26, 26, 26, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #999;
+            font-size: 0.875rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .camera-controls button.active {
+            background: #e63946;
+            border-color: #e63946;
+            color: #ffffff;
+        }
+
+        .camera-controls button:hover {
+            border-color: #e63946;
+            color: #ffffff;
+        }
+
+        #cameraStats {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(15, 15, 15, 0.8);
+            border-radius: 8px;
+        }
+
+        #cameraStats .exercise-label {
+            font-size: 0.875rem;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+        }
+
+        #cameraStats .count-display {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #e63946;
+        }
+
+        #cameraVideoContainer {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 4/3;
+            background: #000;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        #cameraWebcam {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+
+        #cameraCanvas {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            transform: scaleX(-1);
+        }
+
+        #cameraDebugInfo {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            z-index: 10;
+            max-width: 200px;
+        }
+
+        #cameraStatus {
+            text-align: center;
+            color: #999;
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        .save-camera-btn {
+            width: 100%;
+            padding: 1rem;
+            background: #e63946;
+            border: none;
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            margin-top: 1rem;
+        }
+
+        .save-camera-btn:hover {
+            background: #d62839;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(230, 57, 70, 0.3);
+        }
+
+        .save-camera-btn:disabled {
+            background: #666;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        @media (max-width: 968px) {
+            .split-view {
+                grid-template-columns: 1fr;
+            }
         }
 
 
@@ -1105,8 +1281,82 @@
 
             <div class="achievement-section">
                 <h3>Log New Achievement</h3>
+                
+                <div class="logging-methods">
+                    <button class="method-tab active" data-method="camera">🎥 AI Counter</button>
+                    <button class="method-tab" data-method="manual">✍️ Manual Entry</button>
+                </div>
+
                 <div class="success-message-dashboard" id="successMessageDashboard">Achievement saved successfully!</div>
-                <form id="dashboardAchievementForm">
+
+                <!-- Camera Counter Method -->
+                <div class="logging-content active" id="cameraLogging">
+                    <div class="split-view">
+                        <!-- Left: Camera View -->
+                        <div class="camera-section">
+                            <div class="camera-controls">
+                                <button id="cameraSquatBtn" class="active">Squat</button>
+                                <button id="cameraBenchBtn">Bench Press</button>
+                                <button id="cameraDeadliftBtn">Deadlift</button>
+                                <button id="cameraResetBtn" style="margin-left: auto;">Reset</button>
+                            </div>
+
+                            <div id="cameraStats">
+                                <div class="exercise-label" id="cameraExerciseLabel">SQUAT</div>
+                                <div class="count-display" id="cameraCount">0</div>
+                                <div style="font-size: 0.75rem; color: #666; margin-top: 0.5rem;">Reps Detected</div>
+                            </div>
+
+                            <div id="cameraVideoContainer">
+                                <video id="cameraWebcam" autoplay playsinline></video>
+                                <canvas id="cameraCanvas"></canvas>
+                                <div id="cameraDebugInfo"></div>
+                            </div>
+
+                            <div id="cameraStatus">Loading AI model...</div>
+                        </div>
+
+                        <!-- Right: Save Form -->
+                        <div class="camera-section">
+                            <h4 style="font-size: 1.1rem; margin-bottom: 1rem; color: #fff;">Save Your Set</h4>
+                            
+                            <div class="form-group">
+                                <label>Detected Reps</label>
+                                <input type="number" id="cameraRepsInput" value="0" readonly 
+                                       style="background: rgba(230, 57, 70, 0.1); border-color: rgba(230, 57, 70, 0.3);">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cameraWeight">Weight (lbs)</label>
+                                <input type="number" id="cameraWeight" placeholder="0" min="0" step="0.5">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cameraSets">Number of Sets</label>
+                                <input type="number" id="cameraSets" value="1" min="1">
+                            </div>
+
+                            <button type="button" class="save-camera-btn" id="saveCameraAchievement">
+                                Save Achievement
+                            </button>
+
+                            <div style="margin-top: 2rem; padding: 1rem; background: rgba(15, 15, 15, 0.8); border-radius: 8px;">
+                                <h5 style="font-size: 0.875rem; color: #999; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 0.5px;">How It Works</h5>
+                                <ol style="font-size: 0.875rem; color: #888; line-height: 1.6; padding-left: 1.25rem; margin: 0;">
+                                    <li>Select your exercise</li>
+                                    <li>Position camera to see full body</li>
+                                    <li>Perform reps (AI counts automatically)</li>
+                                    <li>Enter weight and sets</li>
+                                    <li>Click "Save Achievement"</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manual Entry Method -->
+                <div class="logging-content" id="manualLogging">
+                    <form id="dashboardAchievementForm">
                     <div class="form-group">
                         <label for="dashboardExercise">Exercise Type</label>
                         <select id="dashboardExercise" required>
@@ -1134,6 +1384,7 @@
 
                     <button type="submit" class="auth-btn">Save Achievement</button>
                 </form>
+                </div>
             </div>
 
             <div class="current-achievements">
@@ -1659,6 +1910,12 @@
                 // User is logged in, show dashboard
                 dashboardModal.classList.add('active');
                 loadUserDashboard(window.currentUser);
+                // Initialize camera after a short delay to allow modal to render
+                setTimeout(() => {
+                    if (window.initializeCamera) {
+                        window.initializeCamera();
+                    }
+                }, 300);
             } else {
                 // Show auth modal
                 authModal.classList.add('active');
@@ -1671,6 +1928,10 @@
 
         closeDashboard.addEventListener('click', () => {
             dashboardModal.classList.remove('active');
+            // Stop camera stream
+            if (window.stopCamera) {
+                window.stopCamera();
+            }
         });
 
         authModal.addEventListener('click', (e) => {
@@ -1682,6 +1943,10 @@
         dashboardModal.addEventListener('click', (e) => {
             if (e.target === dashboardModal) {
                 dashboardModal.classList.remove('active');
+                // Stop camera stream
+                if (window.stopCamera) {
+                    window.stopCamera();
+                }
             }
         });
 
@@ -1735,6 +2000,68 @@
                 await loadUserDashboard(window.currentUser);
             } catch (error) {
                 console.error('Error saving achievement:', error);
+                alert('Failed to save achievement: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Save Achievement';
+            }
+        });
+
+        // Save Camera Achievement
+        document.getElementById('saveCameraAchievement').addEventListener('click', async () => {
+            if (!window.currentUser) {
+                alert('Please sign in to log achievements');
+                return;
+            }
+
+            const reps = parseInt(document.getElementById('cameraRepsInput').value);
+            const weight = parseFloat(document.getElementById('cameraWeight').value);
+            const sets = parseInt(document.getElementById('cameraSets').value);
+            
+            if (!weight || weight <= 0) {
+                alert('Please enter the weight you lifted');
+                return;
+            }
+
+            if (reps <= 0) {
+                alert('No reps detected yet. Perform the exercise first!');
+                return;
+            }
+
+            const btn = document.getElementById('saveCameraAchievement');
+            btn.disabled = true;
+            btn.textContent = 'Saving...';
+
+            try {
+                // Map camera exercise to database format
+                const exerciseMap = {
+                    'squat': 'squat',
+                    'bench': 'benchpress',
+                    'deadlift': 'deadlift'
+                };
+                
+                const exercise = exerciseMap[window.cameraExerciseData.getCurrentExercise()];
+                const isNewRecord = await saveAchievement(window.currentUser, exercise, weight, sets, reps);
+                
+                // Show success message
+                const successMsg = document.getElementById('successMessageDashboard');
+                if (isNewRecord) {
+                    successMsg.textContent = 'New record saved successfully! 🎉';
+                } else {
+                    successMsg.textContent = 'Achievement logged (not a new record)';
+                }
+                successMsg.classList.add('show');
+                setTimeout(() => successMsg.classList.remove('show'), 3000);
+
+                // Reset camera counter and form
+                window.cameraExerciseData.reset();
+                document.getElementById('cameraWeight').value = '';
+                document.getElementById('cameraSets').value = '1';
+
+                // Reload user dashboard
+                await loadUserDashboard(window.currentUser);
+            } catch (error) {
+                console.error('Error saving camera achievement:', error);
                 alert('Failed to save achievement: ' + error.message);
             } finally {
                 btn.disabled = false;
@@ -1915,6 +2242,386 @@
             // DOM already loaded
             setTimeout(() => setupLeaderboardListeners(), 100);
         }
+    </script>
+
+    <!-- MediaPipe Camera Counter -->
+    <script type="module">
+        import { PoseLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
+        
+        let poseLandmarker;
+        let webcamRunning = false;
+        let lastVideoTime = -1;
+        
+        let video = document.getElementById('cameraWebcam');
+        let canvas = document.getElementById('cameraCanvas');
+        let ctx;
+        
+        // Exercise tracking
+        let currentCameraExercise = 'squat';
+        let cameraCount = 0;
+        let isDown = false;
+        let currentAngle = 0;
+        let repDetected = false;
+        let repDetectedTime = 0;
+        let lastRepTime = 0;
+        
+        // Smoothing for stable detection
+        let angleHistory = [];
+        const SMOOTHING_WINDOW = 5;
+        
+        // Thresholds
+        const SQUAT_KNEE_DOWN = 95;
+        const SQUAT_KNEE_UP = 160;
+        const BENCH_ELBOW_DOWN = 65;
+        const BENCH_ELBOW_UP = 155;
+        const DEADLIFT_WRIST_DOWN = 0.15;
+        const DEADLIFT_WRIST_UP = 0.05;
+        const REP_COOLDOWN = 1000;
+        
+        // Initialize when dashboard opens
+        window.initializeCamera = async function() {
+            if (webcamRunning) return; // Already running
+            
+            // Initialize canvas context
+            if (!ctx) {
+                ctx = canvas.getContext('2d');
+                // Set canvas size based on container
+                const container = document.getElementById('cameraVideoContainer');
+                const rect = container.getBoundingClientRect();
+                canvas.width = rect.width;
+                canvas.height = rect.height;
+            }
+            
+            try {
+                document.getElementById('cameraStatus').textContent = 'Loading AI model...';
+                
+                const vision = await FilesetResolver.forVisionTasks(
+                    "https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14/wasm"
+                );
+                
+                poseLandmarker = await PoseLandmarker.createFromOptions(vision, {
+                    baseOptions: {
+                        modelAssetPath: "https://storage.googleapis.com/mediapipe-models/pose_landmarker/pose_landmarker_lite/float16/1/pose_landmarker_lite.task",
+                        delegate: "GPU"
+                    },
+                    runningMode: "VIDEO",
+                    numPoses: 1
+                });
+                
+                document.getElementById('cameraStatus').textContent = 'Starting camera...';
+                
+                const constraints = {
+                    video: {
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
+                    }
+                };
+                
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                video.srcObject = stream;
+                
+                video.addEventListener('loadeddata', () => {
+                    webcamRunning = true;
+                    document.getElementById('cameraStatus').textContent = '✓ Ready! Perform exercises to count reps.';
+                    predictWebcam();
+                });
+            } catch (error) {
+                console.error('Camera initialization error:', error);
+                document.getElementById('cameraStatus').textContent = '❌ Error: ' + error.message;
+            }
+        };
+        
+        async function predictWebcam() {
+            if (!webcamRunning) return;
+            
+            let startTimeMs = performance.now();
+            if (lastVideoTime !== video.currentTime) {
+                lastVideoTime = video.currentTime;
+                
+                try {
+                    const results = await poseLandmarker.detectForVideo(video, startTimeMs);
+                    
+                    ctx.save();
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    
+                    if (results.landmarks && results.landmarks.length > 0) {
+                        const landmarks = results.landmarks[0];
+                        drawSkeleton(landmarks);
+                        drawLandmarks(landmarks);
+                        countExercise(landmarks);
+                        drawDebug(landmarks);
+                    }
+                    
+                    ctx.restore();
+                } catch (error) {
+                    console.error('Detection error:', error);
+                }
+            }
+            
+            if (repDetected && Date.now() - repDetectedTime > 500) {
+                repDetected = false;
+            }
+            
+            window.requestAnimationFrame(predictWebcam);
+        }
+        
+        function drawLandmarks(landmarks) {
+            for (let i = 0; i < landmarks.length; i++) {
+                const landmark = landmarks[i];
+                const x = landmark.x * canvas.width;
+                const y = landmark.y * canvas.height;
+                
+                ctx.fillStyle = repDetected ? '#00FF00' : '#FFFF00';
+                ctx.strokeStyle = '#000000';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(x, y, 4, 0, 2 * Math.PI);
+                ctx.fill();
+                ctx.stroke();
+            }
+        }
+        
+        function drawSkeleton(landmarks) {
+            const connections = [
+                [11, 12], [11, 13], [13, 15], [12, 14], [14, 16],
+                [11, 23], [12, 24], [23, 24], [23, 25], [25, 27],
+                [24, 26], [26, 28]
+            ];
+            
+            ctx.strokeStyle = repDetected ? '#00FF00' : '#00FFFF';
+            ctx.lineWidth = 3;
+            ctx.lineCap = 'round';
+            
+            for (const [start, end] of connections) {
+                const startPoint = landmarks[start];
+                const endPoint = landmarks[end];
+                
+                if (startPoint && endPoint) {
+                    ctx.beginPath();
+                    ctx.moveTo(startPoint.x * canvas.width, startPoint.y * canvas.height);
+                    ctx.lineTo(endPoint.x * canvas.width, endPoint.y * canvas.height);
+                    ctx.stroke();
+                }
+            }
+        }
+        
+        function calculateAngle(a, b, c) {
+            const radians = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
+            let angle = Math.abs(radians * 180.0 / Math.PI);
+            if (angle > 180.0) angle = 360 - angle;
+            return angle;
+        }
+        
+        function smoothAngle(newAngle) {
+            angleHistory.push(newAngle);
+            if (angleHistory.length > SMOOTHING_WINDOW) {
+                angleHistory.shift();
+            }
+            const sum = angleHistory.reduce((a, b) => a + b, 0);
+            return sum / angleHistory.length;
+        }
+        
+        function countExercise(landmarks) {
+            if (currentCameraExercise === 'squat') {
+                countSquat(landmarks);
+            } else if (currentCameraExercise === 'bench') {
+                countBenchPress(landmarks);
+            } else if (currentCameraExercise === 'deadlift') {
+                countDeadlift(landmarks);
+            }
+        }
+        
+        function countSquat(landmarks) {
+            if (Date.now() - lastRepTime < REP_COOLDOWN) return;
+            
+            const leftHip = landmarks[23];
+            const leftKnee = landmarks[25];
+            const leftAnkle = landmarks[27];
+            const rightHip = landmarks[24];
+            const rightKnee = landmarks[26];
+            const rightAnkle = landmarks[28];
+            
+            if (!leftHip || !leftKnee || !leftAnkle || !rightHip || !rightKnee || !rightAnkle) return;
+            
+            const leftKneeAngle = calculateAngle(leftHip, leftKnee, leftAnkle);
+            const rightKneeAngle = calculateAngle(rightHip, rightKnee, rightAnkle);
+            const avgKneeAngle = (leftKneeAngle + rightKneeAngle) / 2;
+            const smoothedAngle = smoothAngle(avgKneeAngle);
+            currentAngle = smoothedAngle;
+            
+            if (smoothedAngle < SQUAT_KNEE_DOWN && !isDown) {
+                isDown = true;
+            } else if (smoothedAngle > SQUAT_KNEE_UP && isDown) {
+                isDown = false;
+                cameraCount++;
+                updateCameraCount();
+                repDetected = true;
+                repDetectedTime = Date.now();
+                lastRepTime = Date.now();
+            }
+        }
+        
+        function countBenchPress(landmarks) {
+            if (Date.now() - lastRepTime < REP_COOLDOWN) return;
+            
+            const leftShoulder = landmarks[11];
+            const leftElbow = landmarks[13];
+            const leftWrist = landmarks[15];
+            const rightShoulder = landmarks[12];
+            const rightElbow = landmarks[14];
+            const rightWrist = landmarks[16];
+            
+            if (!leftShoulder || !leftElbow || !leftWrist || !rightShoulder || !rightElbow || !rightWrist) return;
+            
+            const leftElbowAngle = calculateAngle(leftShoulder, leftElbow, leftWrist);
+            const rightElbowAngle = calculateAngle(rightShoulder, rightElbow, rightWrist);
+            const avgElbowAngle = (leftElbowAngle + rightElbowAngle) / 2;
+            const smoothedAngle = smoothAngle(avgElbowAngle);
+            currentAngle = smoothedAngle;
+            
+            if (smoothedAngle < BENCH_ELBOW_DOWN && !isDown) {
+                isDown = true;
+            } else if (smoothedAngle > BENCH_ELBOW_UP && isDown) {
+                isDown = false;
+                cameraCount++;
+                updateCameraCount();
+                repDetected = true;
+                repDetectedTime = Date.now();
+                lastRepTime = Date.now();
+            }
+        }
+        
+        function countDeadlift(landmarks) {
+            if (Date.now() - lastRepTime < REP_COOLDOWN) return;
+            
+            const leftWrist = landmarks[15];
+            const rightWrist = landmarks[16];
+            const leftHip = landmarks[23];
+            const rightHip = landmarks[24];
+            
+            if (!leftWrist || !rightWrist || !leftHip || !rightHip) return;
+            
+            const avgWristY = (leftWrist.y + rightWrist.y) / 2;
+            const avgHipY = (leftHip.y + rightHip.y) / 2;
+            const wristBelowHip = avgWristY - avgHipY;
+            const smoothedDistance = smoothAngle(wristBelowHip * 100) / 100;
+            currentAngle = smoothedDistance * 100;
+            
+            if (smoothedDistance > DEADLIFT_WRIST_DOWN && !isDown) {
+                isDown = true;
+            } else if (smoothedDistance < DEADLIFT_WRIST_UP && isDown) {
+                isDown = false;
+                cameraCount++;
+                updateCameraCount();
+                repDetected = true;
+                repDetectedTime = Date.now();
+                lastRepTime = Date.now();
+            }
+        }
+        
+        function updateCameraCount() {
+            document.getElementById('cameraCount').textContent = cameraCount;
+            document.getElementById('cameraRepsInput').value = cameraCount;
+        }
+        
+        function drawDebug(landmarks) {
+            const debugDiv = document.getElementById('cameraDebugInfo');
+            let html = `
+                <div style="color: white; font-size: 11px;">
+                    <strong>Angle:</strong> ${currentAngle.toFixed(1)}°<br>
+                    <strong>State:</strong> ${isDown ? '🔴 DOWN' : '🟢 UP'}<br>
+                    <strong>Reps:</strong> ${cameraCount}
+                </div>
+            `;
+            
+            if (landmarks.length < 20) {
+                html += '<div style="color: red; font-weight: bold; margin-top: 3px; font-size: 10px;">⚠️ Step back!</div>';
+            }
+            
+            debugDiv.innerHTML = html;
+        }
+        
+        // Camera exercise buttons
+        document.getElementById('cameraSquatBtn').addEventListener('click', () => {
+            currentCameraExercise = 'squat';
+            isDown = false;
+            lastRepTime = 0;
+            angleHistory = [];
+            document.getElementById('cameraExerciseLabel').textContent = 'SQUAT';
+            document.querySelectorAll('.camera-controls button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('cameraSquatBtn').classList.add('active');
+        });
+        
+        document.getElementById('cameraBenchBtn').addEventListener('click', () => {
+            currentCameraExercise = 'bench';
+            isDown = false;
+            lastRepTime = 0;
+            angleHistory = [];
+            document.getElementById('cameraExerciseLabel').textContent = 'BENCH PRESS';
+            document.querySelectorAll('.camera-controls button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('cameraBenchBtn').classList.add('active');
+        });
+        
+        document.getElementById('cameraDeadliftBtn').addEventListener('click', () => {
+            currentCameraExercise = 'deadlift';
+            isDown = false;
+            lastRepTime = 0;
+            angleHistory = [];
+            document.getElementById('cameraExerciseLabel').textContent = 'DEADLIFT';
+            document.querySelectorAll('.camera-controls button').forEach(btn => btn.classList.remove('active'));
+            document.getElementById('cameraDeadliftBtn').classList.add('active');
+        });
+        
+        document.getElementById('cameraResetBtn').addEventListener('click', () => {
+            cameraCount = 0;
+            isDown = false;
+            lastRepTime = 0;
+            angleHistory = [];
+            updateCameraCount();
+        });
+        
+        // Tab switching
+        document.querySelectorAll('.method-tab').forEach(tab => {
+            tab.addEventListener('click', function() {
+                const method = this.dataset.method;
+                
+                document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
+                this.classList.add('active');
+                
+                document.querySelectorAll('.logging-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                if (method === 'camera') {
+                    document.getElementById('cameraLogging').classList.add('active');
+                    // Initialize camera when tab is opened
+                    setTimeout(() => window.initializeCamera(), 100);
+                } else {
+                    document.getElementById('manualLogging').classList.add('active');
+                }
+            });
+        });
+        
+        // Expose for global access
+        window.cameraExerciseData = {
+            getCurrentExercise: () => currentCameraExercise,
+            getCount: () => cameraCount,
+            reset: () => {
+                cameraCount = 0;
+                updateCameraCount();
+            }
+        };
+        
+        // Stop camera function
+        window.stopCamera = function() {
+            if (video && video.srcObject) {
+                const stream = video.srcObject;
+                const tracks = stream.getTracks();
+                tracks.forEach(track => track.stop());
+                video.srcObject = null;
+                webcamRunning = false;
+            }
+        };
     </script>
 
     <script>
