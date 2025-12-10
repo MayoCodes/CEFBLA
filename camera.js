@@ -1,6 +1,7 @@
-import { PoseLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
+import { PoseLandmarker, FilesetResolver, HandLandmarker } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
 
 let poseLandmarker;
+let handLandmarker;
 let webcamRunning = false;
 let lastVideoTime = -1;
 
@@ -9,12 +10,17 @@ let canvas = document.getElementById('cameraCanvas');
 let ctx;
 
 let currentCameraExercise = 'squat';
-let setsCompleted = 0;
+let currentSetReps = 0;
+let savedSets = [];
 let isDown = false;
 let currentAngle = 0;
 let repDetected = false;
 let repDetectedTime = 0;
 let lastRepTime = 0;
+
+let palmRaised = false;
+let lastPalmTime = 0;
+const PALM_COOLDOWN = 2000;
 
 let angleHistory = [];
 const SMOOTHING_WINDOW = 5;
@@ -53,6 +59,15 @@ window.initializeCamera = async function() {
             runningMode: "VIDEO",
             numPoses: 1
         });
+
+        handLandmarker = await HandLandmarker.createFromOptions(vision, {
+            baseOptions: {
+                modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
+                delegate: "GPU"
+            },
+            runningMode: "VIDEO",
+            numHands: 2
+        });
         
         document.getElementById('cameraStatus').textContent = 'Starting camera...';
         
@@ -86,6 +101,7 @@ async function predictWebcam() {
         
         try {
             const poseResults = await poseLandmarker.detectForVideo(video, startTimeMs);
+            const handResults = await handLandmarker.detectForVideo(video, startTimeMs);
             
             ctx.save();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -96,6 +112,10 @@ async function predictWebcam() {
                 drawLandmarks(landmarks);
                 countExercise(landmarks);
                 drawDebug(landmarks);
+            }
+
+            if (handResults.landmarks && handResults.landmarks.length > 0) {
+                detectPalmGesture(handResults);
             }
             
             ctx.restore();
@@ -111,9 +131,96 @@ async function predictWebcam() {
     window.requestAnimationFrame(predictWebcam);
 }
 
-function updateSetsDisplay() {
-    document.getElementById('cameraSets').value = setsCompleted;
+function detectPalmGesture(handResults) {
+    if (Date.now() - lastPalmTime < PALM_COOLDOWN) return;
+    
+    for (let i = 0; i < handResults.landmarks.length; i++) {
+        const landmarks = handResults.landmarks[i];
+        
+        const wrist = landmarks[0];
+        const thumbTip = landmarks[4];
+        const indexTip = landmarks[8];
+        const middleTip = landmarks[12];
+        const ringTip = landmarks[16];
+        const pinkyTip = landmarks[20];
+        
+        const fingersExtended = 
+            indexTip.y < wrist.y &&
+            middleTip.y < wrist.y &&
+            ringTip.y < wrist.y &&
+            pinkyTip.y < wrist.y;
+        
+        if (fingersExtended && !palmRaised) {
+            palmRaised = true;
+            lastPalmTime = Date.now();
+            saveCurrentSet();
+            
+            ctx.fillStyle = 'rgba(6, 255, 165, 0.3)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            break;
+        }
+    }
+    
+    if (palmRaised && Date.now() - lastPalmTime > 1000) {
+        palmRaised = false;
+    }
 }
+
+function saveCurrentSet() {
+    if (currentSetReps > 0) {
+        savedSets.push({
+            setNumber: savedSets.length + 1,
+            reps: currentSetReps
+        });
+        
+        updateSetsTable();
+        currentSetReps = 0;
+        updateCameraCount();
+        document.getElementById('currentSetNumber').textContent = savedSets.length + 1;
+    }
+}
+
+function updateSetsTable() {
+    const tbody = document.getElementById('cameraSetsTable');
+    
+    if (savedSets.length === 0) {
+        tbody.innerHTML = `
+            <tr class="empty-sets-message">
+                <td colspan="3">No sets logged yet. Start lifting!</td>
+            </tr>
+        `;
+    } else {
+        tbody.innerHTML = '';
+        savedSets.forEach((set, index) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>Set ${set.setNumber}</td>
+                <td>${set.reps} reps</td>
+                <td><button class="delete-set-btn" onclick="window.deleteSet(${index})">Delete</button></td>
+            `;
+            tbody.appendChild(row);
+        });
+    }
+    
+    updateTotalReps();
+}
+
+function updateTotalReps() {
+    const total = savedSets.reduce((sum, set) => sum + set.reps, 0);
+    document.getElementById('cameraTotalReps').textContent = total;
+}
+
+window.deleteSet = function(index) {
+    savedSets.splice(index, 1);
+    
+    savedSets.forEach((set, i) => {
+        set.setNumber = i + 1;
+    });
+    
+    updateSetsTable();
+    document.getElementById('currentSetNumber').textContent = savedSets.length + 1;
+};
 
 function drawLandmarks(landmarks) {
     for (let i = 0; i < landmarks.length; i++) {
@@ -203,9 +310,8 @@ function countSquat(landmarks) {
         isDown = true;
     } else if (smoothedAngle > SQUAT_KNEE_UP && isDown) {
         isDown = false;
-        setsCompleted++;
+        currentSetReps++;
         updateCameraCount();
-        updateSetsDisplay();
         repDetected = true;
         repDetectedTime = Date.now();
         lastRepTime = Date.now();
@@ -234,9 +340,8 @@ function countBenchPress(landmarks) {
         isDown = true;
     } else if (smoothedAngle > BENCH_ELBOW_UP && isDown) {
         isDown = false;
-        setsCompleted++;
+        currentSetReps++;
         updateCameraCount();
-        updateSetsDisplay();
         repDetected = true;
         repDetectedTime = Date.now();
         lastRepTime = Date.now();
@@ -263,9 +368,8 @@ function countDeadlift(landmarks) {
         isDown = true;
     } else if (smoothedDistance < DEADLIFT_WRIST_UP && isDown) {
         isDown = false;
-        setsCompleted++;
+        currentSetReps++;
         updateCameraCount();
-        updateSetsDisplay();
         repDetected = true;
         repDetectedTime = Date.now();
         lastRepTime = Date.now();
@@ -274,7 +378,7 @@ function countDeadlift(landmarks) {
 
 
 function updateCameraCount() {
-    document.getElementById('cameraCount').textContent = setsCompleted;
+    document.getElementById('cameraCount').textContent = currentSetReps;
 }
 
 function drawDebug(landmarks) {
@@ -283,12 +387,17 @@ function drawDebug(landmarks) {
         <div style="color: white; font-size: 11px;">
             <strong>Angle:</strong> ${currentAngle.toFixed(1)}°<br>
             <strong>State:</strong> ${isDown ? 'DOWN' : 'UP'}<br>
-            <strong>Sets:</strong> ${setsCompleted}
+            <strong>Current Set Reps:</strong> ${currentSetReps}<br>
+            <strong>Total Sets:</strong> ${savedSets.length}
         </div>
     `;
     
     if (landmarks.length < 20) {
         html += '<div style="color: red; font-weight: bold; margin-top: 3px; font-size: 10px;">STEP BACK - NEED FULL BODY</div>';
+    }
+    
+    if (palmRaised) {
+        html += '<div style="color: #06ffa5; font-weight: bold; margin-top: 3px; font-size: 11px;">✓ SET SAVED!</div>';
     }
     
     debugDiv.innerHTML = html;
@@ -301,7 +410,7 @@ document.getElementById('cameraSquatBtn').addEventListener('click', () => {
     lastRepTime = 0;
     angleHistory = [];
     document.getElementById('cameraExerciseLabel').textContent = 'SQUAT';
-    document.querySelectorAll('.camera-controls button').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.camera-controls button:not(#cameraResetBtn)').forEach(btn => btn.classList.remove('active'));
     document.getElementById('cameraSquatBtn').classList.add('active');
 });
 
@@ -311,7 +420,7 @@ document.getElementById('cameraBenchBtn').addEventListener('click', () => {
     lastRepTime = 0;
     angleHistory = [];
     document.getElementById('cameraExerciseLabel').textContent = 'BENCH PRESS';
-    document.querySelectorAll('.camera-controls button').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.camera-controls button:not(#cameraResetBtn)').forEach(btn => btn.classList.remove('active'));
     document.getElementById('cameraBenchBtn').classList.add('active');
 });
 
@@ -321,17 +430,19 @@ document.getElementById('cameraDeadliftBtn').addEventListener('click', () => {
     lastRepTime = 0;
     angleHistory = [];
     document.getElementById('cameraExerciseLabel').textContent = 'DEADLIFT';
-    document.querySelectorAll('.camera-controls button').forEach(btn => btn.classList.remove('active'));
+    document.querySelectorAll('.camera-controls button:not(#cameraResetBtn)').forEach(btn => btn.classList.remove('active'));
     document.getElementById('cameraDeadliftBtn').classList.add('active');
 });
 
 document.getElementById('cameraResetBtn').addEventListener('click', () => {
-    setsCompleted = 0;
+    currentSetReps = 0;
+    savedSets = [];
     isDown = false;
     lastRepTime = 0;
     angleHistory = [];
     updateCameraCount();
-    updateSetsDisplay();
+    updateSetsTable();
+    document.getElementById('currentSetNumber').textContent = 1;
 });
 
 document.querySelectorAll('.method-tab').forEach(tab => {
@@ -356,11 +467,13 @@ document.querySelectorAll('.method-tab').forEach(tab => {
 
 window.cameraExerciseData = {
     getCurrentExercise: () => currentCameraExercise,
-    getSets: () => setsCompleted,
+    getSets: () => savedSets,
     reset: () => {
-        setsCompleted = 0;
+        currentSetReps = 0;
+        savedSets = [];
         updateCameraCount();
-        updateSetsDisplay();
+        updateSetsTable();
+        document.getElementById('currentSetNumber').textContent = 1;
     }
 };
 

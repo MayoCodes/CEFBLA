@@ -79,8 +79,8 @@
                             <th>Rank</th>
                             <th>Participant</th>
                             <th>Weight (lbs)</th>
-                            <th>Sets</th>
-                            <th>Total Weight</th>
+                            <th>Total Reps</th>
+                            <th>Total Volume</th>
                         </tr>
                     </thead>
                     <tbody id="leaderboardBody">
@@ -155,7 +155,7 @@
                     <div class="process-number green-number">03</div>
                     <div>
                         <h3 class="process-step-title">LOG IT</h3>
-                        <p class="process-step-text">Open dashboard. Each rep detected counts as one set with your max weight.</p>
+                        <p class="process-step-text">Open dashboard. AI counts your reps. Raise palm to save each set. Volume = weight × total reps.</p>
                     </div>
                 </div>
 
@@ -166,6 +166,12 @@
                         <p class="process-step-text">Check leaderboards. See where you rank. Beat your records.</p>
                     </div>
                 </div>
+            </div>
+
+            <div class="volume-formula-box">
+                <div class="formula-title">Volume Formula</div>
+                <div class="formula-equation">VOLUME = WEIGHT × TOTAL REPS</div>
+                <div class="formula-example">Example: 225 lbs × 30 reps = 6,750 lbs total volume</div>
             </div>
         </div>
     </section>
@@ -182,7 +188,7 @@
                     </div>
                 </div>
                 <div class="stat-card">
-                    <h3>Total Weight Lifted</h3>
+                    <h3>Total Volume Lifted</h3>
                     <div class="stat-value" id="totalVolume">0</div>
                     <p class="stats-subtitle">pounds across all exercises</p>
                 </div>
@@ -245,13 +251,14 @@
                                 <button id="cameraSquatBtn" class="active">Squat</button>
                                 <button id="cameraBenchBtn">Bench Press</button>
                                 <button id="cameraDeadliftBtn">Deadlift</button>
-                                <button id="cameraResetBtn" class="camera-reset-btn">Reset</button>
+                                <button id="cameraResetBtn" class="camera-reset-btn">Reset All</button>
                             </div>
 
                             <div id="cameraStats">
                                 <div class="exercise-label" id="cameraExerciseLabel">SQUAT</div>
                                 <div class="count-display" id="cameraCount">0</div>
-                                <div class="reps-detected-label">Sets Completed</div>
+                                <div class="reps-detected-label">Reps in Current Set</div>
+                                <div class="current-set-label">Set <span id="currentSetNumber">1</span></div>
                             </div>
 
                             <div id="cameraVideoContainer">
@@ -261,19 +268,42 @@
                             </div>
 
                             <div id="cameraStatus">Loading AI model...</div>
+
+                            <div class="palm-instruction-box">
+                                <strong>🖐️ Raise your palm</strong> to save the current set and move to the next one
+                            </div>
                         </div>
 
                         <div class="camera-section">
-                            <h4 class="save-set-title">Save Your Sets</h4>
+                            <h4 class="save-set-title">Save Your Workout</h4>
                             
                             <div class="form-group">
-                                <label for="cameraWeight">Weight per Rep (lbs)</label>
+                                <label for="cameraWeight">Weight (lbs)</label>
                                 <input type="number" id="cameraWeight" placeholder="0" min="0" step="0.5">
                             </div>
 
-                            <div class="form-group">
-                                <label for="cameraSets">Sets Detected</label>
-                                <input type="number" id="cameraSets" value="0" min="0" readonly class="camera-sets-input">
+                            <div class="sets-table-container">
+                                <table class="sets-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Set</th>
+                                            <th>Reps</th>
+                                            <th></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="cameraSetsTable">
+                                        <tr class="empty-sets-message">
+                                            <td colspan="3">No sets logged yet. Start lifting!</td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td><strong>Total:</strong></td>
+                                            <td><strong id="cameraTotalReps">0</strong></td>
+                                            <td></td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
                             </div>
 
                             <button type="button" class="save-camera-btn" id="saveCameraAchievement">
@@ -285,29 +315,36 @@
 
                 <div class="logging-content" id="manualLogging">
                     <form id="dashboardAchievementForm">
-                    <div class="form-group">
-                        <label for="dashboardExercise">Exercise Type</label>
-                        <select id="dashboardExercise" required>
-                            <option value="">Select Exercise</option>
-                            <option value="squat">Squat</option>
-                            <option value="deadlift">Deadlift</option>
-                            <option value="benchpress">Bench Press</option>
-                        </select>
-                    </div>
-
-                    <div class="exercise-inputs">
                         <div class="form-group">
-                            <label for="dashboardWeight">Weight per Rep (lbs)</label>
+                            <label for="dashboardExercise">Exercise Type</label>
+                            <select id="dashboardExercise" required>
+                                <option value="">Select Exercise</option>
+                                <option value="squat">Squat</option>
+                                <option value="deadlift">Deadlift</option>
+                                <option value="benchpress">Bench Press</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="dashboardWeight">Weight (lbs)</label>
                             <input type="number" id="dashboardWeight" required placeholder="0" min="0" step="0.5">
                         </div>
-                        <div class="form-group">
-                            <label for="dashboardSets">Sets (one rep each)</label>
-                            <input type="number" id="dashboardSets" required placeholder="0" min="1">
-                        </div>
-                    </div>
 
-                    <button type="submit" class="auth-btn">Save Achievement</button>
-                </form>
+                        <div class="manual-sets-section">
+                            <label>Sets & Reps</label>
+                            <div class="manual-sets-container" id="manualSetsContainer">
+                                <div class="manual-set-row">
+                                    <span class="set-number">Set 1:</span>
+                                    <input type="number" class="manual-reps-input" placeholder="Reps" min="1" required>
+                                    <button type="button" class="remove-set-btn" onclick="removeManualSet(this)">×</button>
+                                </div>
+                            </div>
+                            <button type="button" class="add-set-btn" id="addManualSet">+ Add Set</button>
+                            <div class="manual-total">Total Reps: <span id="manualTotalReps">0</span></div>
+                        </div>
+
+                        <button type="submit" class="auth-btn">Save Achievement</button>
+                    </form>
                 </div>
             </div>
 

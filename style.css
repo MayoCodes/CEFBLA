@@ -1309,3 +1309,229 @@ margin-left: auto;
         overflow-x: auto;
     }
 }
+
+.volume-formula-box {
+    background: rgba(230, 57, 70, 0.1);
+    border: 2px solid rgba(230, 57, 70, 0.3);
+    border-radius: 8px;
+    padding: 2rem;
+    margin-top: 3rem;
+    text-align: center;
+}
+
+.formula-title {
+    font-size: 0.875rem;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+}
+
+.formula-equation {
+    font-size: 2rem;
+    color: #e63946;
+    font-weight: 800;
+    margin-bottom: 0.5rem;
+    letter-spacing: 2px;
+}
+
+.formula-example {
+    font-size: 0.95rem;
+    color: #bbb;
+}
+
+.palm-instruction-box {
+    background: rgba(6, 255, 165, 0.1);
+    border: 2px solid rgba(6, 255, 165, 0.3);
+    border-radius: 6px;
+    padding: 1rem;
+    text-align: center;
+    color: #06ffa5;
+    font-size: 0.95rem;
+    margin-top: 1rem;
+}
+
+.current-set-label {
+    font-size: 0.875rem;
+    color: #06ffa5;
+    margin-top: 0.5rem;
+    font-weight: 600;
+}
+
+.sets-table-container {
+    max-height: 300px;
+    overflow-y: auto;
+    margin: 1rem 0;
+    border: 2px solid rgba(255, 255, 255, 0.15);
+    border-radius: 6px;
+}
+
+.sets-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.sets-table thead {
+    background: rgba(15, 15, 15, 0.9);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.sets-table th {
+    padding: 0.75rem;
+    text-align: left;
+    color: #e63946;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.75rem;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+}
+
+.sets-table td {
+    padding: 0.75rem;
+    color: #ccc;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.sets-table tbody tr:hover {
+    background: rgba(230, 57, 70, 0.05);
+}
+
+.sets-table tfoot {
+    background: rgba(15, 15, 15, 0.9);
+    position: sticky;
+    bottom: 0;
+}
+
+.sets-table tfoot td {
+    padding: 0.75rem;
+    color: #e63946;
+    font-size: 0.95rem;
+    border-top: 2px solid rgba(230, 57, 70, 0.3);
+}
+
+.empty-sets-message td {
+    text-align: center;
+    color: #666;
+    padding: 2rem !important;
+    font-style: italic;
+}
+
+.delete-set-btn {
+    background: rgba(230, 57, 70, 0.2);
+    border: 1px solid rgba(230, 57, 70, 0.4);
+    color: #e63946;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
+}
+
+.delete-set-btn:hover {
+    background: rgba(230, 57, 70, 0.3);
+}
+
+.manual-sets-section {
+    margin: 1.5rem 0;
+}
+
+.manual-sets-section label {
+    display: block;
+    margin-bottom: 1rem;
+    color: #ddd;
+    font-weight: 600;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.manual-sets-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.manual-set-row {
+    display: grid;
+    grid-template-columns: 60px 1fr 40px;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.set-number {
+    color: #999;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.manual-reps-input {
+    padding: 0.75rem;
+    background: rgba(15, 15, 15, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+    color: #ffffff;
+    font-size: 1rem;
+    font-family: 'Bebas Neue', sans-serif;
+}
+
+.manual-reps-input:focus {
+    outline: none;
+    border-color: #e63946;
+    box-shadow: 0 0 0 3px rgba(230, 57, 70, 0.2);
+}
+
+.remove-set-btn {
+    background: rgba(230, 57, 70, 0.2);
+    border: 1px solid rgba(230, 57, 70, 0.4);
+    color: #e63946;
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1.25rem;
+    line-height: 1;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.remove-set-btn:hover {
+    background: rgba(230, 57, 70, 0.3);
+}
+
+.add-set-btn {
+    width: 100%;
+    padding: 0.75rem;
+    background: rgba(6, 255, 165, 0.1);
+    border: 2px dashed rgba(6, 255, 165, 0.3);
+    border-radius: 4px;
+    color: #06ffa5;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: 'Bebas Neue', sans-serif;
+    letter-spacing: 1px;
+}
+
+.add-set-btn:hover {
+    background: rgba(6, 255, 165, 0.2);
+    border-color: #06ffa5;
+}
+
+.manual-total {
+    margin-top: 1rem;
+    padding: 0.75rem;
+    background: rgba(230, 57, 70, 0.1);
+    border: 1px solid rgba(230, 57, 70, 0.3);
+    border-radius: 4px;
+    color: #e63946;
+    font-weight: 700;
+    text-align: center;
+    font-size: 1.1rem;
+}

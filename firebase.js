@@ -104,13 +104,14 @@ function updateRecordDisplay(exercise, achievement) {
 
     if (achievement) {
         const weight = achievement.weight || 0;
-        const sets = achievement.sets || 0;
-        const totalWeight = achievement.totalWeight || (weight * sets);
+        const sets = achievement.sets || [];
+        const totalReps = sets.reduce((sum, set) => sum + (set.reps || 0), 0);
+        const totalVolume = weight * totalReps;
         
         document.getElementById(statsId).textContent = 
-            `${weight} lbs × ${sets} sets`;
+            `${weight} lbs × ${totalReps} reps (${sets.length} sets)`;
         document.getElementById(volumeId).textContent = 
-            `${totalWeight.toLocaleString()} lbs total`;
+            `${totalVolume.toLocaleString()} lbs total`;
     } else {
         document.getElementById(statsId).textContent = 'Not logged';
         document.getElementById(volumeId).textContent = '-';
@@ -118,13 +119,15 @@ function updateRecordDisplay(exercise, achievement) {
 }
 
 async function saveAchievement(user, exercise, weight, sets) {
-    const totalWeight = weight * sets;
+    const totalReps = sets.reduce((sum, set) => sum + set.reps, 0);
+    const totalVolume = weight * totalReps;
     const userDocRef = doc(db, 'users', user.uid);
 
     const achievementData = {
         weight: weight,
         sets: sets,
-        totalWeight: totalWeight,
+        totalReps: totalReps,
+        totalVolume: totalVolume,
         timestamp: serverTimestamp()
     };
 
@@ -134,7 +137,7 @@ async function saveAchievement(user, exercise, weight, sets) {
         const currentData = userDoc.data();
         const currentAchievements = currentData.achievements || {};
         
-        if (!currentAchievements[exercise] || totalWeight > currentAchievements[exercise].totalWeight) {
+        if (!currentAchievements[exercise] || totalVolume > currentAchievements[exercise].totalVolume) {
             currentAchievements[exercise] = achievementData;
             
             await setDoc(userDocRef, {
@@ -217,29 +220,29 @@ function displayLeaderboardForExercise(exercise, users) {
 
     if (exercise === 'overall') {
         users.forEach(user => {
-            let totalWeight = 0;
-            let totalWeightVal = 0;
-            let totalSets = 0;
+            let totalVolume = 0;
+            let totalReps = 0;
+            let maxWeight = 0;
 
             ['squat', 'deadlift', 'benchpress'].forEach(ex => {
                 if (user.achievements[ex]) {
                     const ach = user.achievements[ex];
                     const weight = ach.weight || 0;
-                    const sets = ach.sets || 0;
-                    const achTotalWeight = ach.totalWeight || (weight * sets);
+                    const sets = ach.sets || [];
+                    const reps = sets.reduce((sum, set) => sum + (set.reps || 0), 0);
                     
-                    totalWeight += achTotalWeight;
-                    totalWeightVal += weight;
-                    totalSets += sets;
+                    totalVolume += weight * reps;
+                    totalReps += reps;
+                    if (weight > maxWeight) maxWeight = weight;
                 }
             });
 
-            if (totalWeight > 0) {
+            if (totalVolume > 0) {
                 data.push({
                     name: user.displayName,
-                    weight: totalWeightVal,
-                    sets: totalSets,
-                    totalWeight: totalWeight
+                    weight: maxWeight,
+                    totalReps: totalReps,
+                    totalVolume: totalVolume
                 });
             }
         });
@@ -250,20 +253,21 @@ function displayLeaderboardForExercise(exercise, users) {
             if (user.achievements[exerciseKey]) {
                 const ach = user.achievements[exerciseKey];
                 const weight = ach.weight || 0;
-                const sets = ach.sets || 0;
-                const totalWeight = ach.totalWeight || (weight * sets);
+                const sets = ach.sets || [];
+                const totalReps = sets.reduce((sum, set) => sum + (set.reps || 0), 0);
+                const totalVolume = weight * totalReps;
                 
                 data.push({
                     name: user.displayName,
                     weight: weight,
-                    sets: sets,
-                    totalWeight: totalWeight
+                    totalReps: totalReps,
+                    totalVolume: totalVolume
                 });
             }
         });
     }
 
-    data.sort((a, b) => b.totalWeight - a.totalWeight);
+    data.sort((a, b) => b.totalVolume - a.totalVolume);
 
     tbody.innerHTML = '';
     data.forEach((item, index) => {
@@ -274,8 +278,8 @@ function displayLeaderboardForExercise(exercise, users) {
             <td><span class="${rankClass}">${index + 1}</span></td>
             <td>${item.name}</td>
             <td>${item.weight} lbs</td>
-            <td>${item.sets}</td>
-            <td class="total-weight">${(item.totalWeight || 0).toLocaleString()} lbs</td>
+            <td>${item.totalReps}</td>
+            <td class="total-weight">${(item.totalVolume || 0).toLocaleString()} lbs</td>
         `;
         tbody.appendChild(row);
     });
@@ -300,12 +304,13 @@ function updateStatsFromFirestore(users) {
             if (user.achievements[exercise]) {
                 const ach = user.achievements[exercise];
                 const weight = ach.weight || 0;
-                const sets = ach.sets || 0;
-                const achTotalWeight = ach.totalWeight || (weight * sets);
+                const sets = ach.sets || [];
+                const reps = sets.reduce((sum, set) => sum + (set.reps || 0), 0);
+                const volume = weight * reps;
                 
-                totalVolume += achTotalWeight;
+                totalVolume += volume;
                 exerciseCounts[exercise]++;
-                exerciseVolumes[exercise] += achTotalWeight;
+                exerciseVolumes[exercise] += volume;
             }
         });
     });
@@ -469,9 +474,22 @@ document.getElementById('dashboardAchievementForm').addEventListener('submit', a
 
     const exercise = document.getElementById('dashboardExercise').value;
     const weight = parseFloat(document.getElementById('dashboardWeight').value);
-    const sets = parseInt(document.getElementById('dashboardSets').value);
-    const btn = e.target.querySelector('.auth-btn');
+    
+    const repsInputs = document.querySelectorAll('.manual-reps-input');
+    const sets = [];
+    repsInputs.forEach((input, index) => {
+        const reps = parseInt(input.value);
+        if (reps > 0) {
+            sets.push({ setNumber: index + 1, reps: reps });
+        }
+    });
 
+    if (sets.length === 0) {
+        alert('Please add at least one set with reps');
+        return;
+    }
+
+    const btn = e.target.querySelector('.auth-btn');
     btn.disabled = true;
     btn.textContent = 'Saving...';
 
@@ -488,6 +506,7 @@ document.getElementById('dashboardAchievementForm').addEventListener('submit', a
         setTimeout(() => successMsg.classList.remove('show'), 3000);
 
         e.target.reset();
+        resetManualSets();
 
         await loadUserDashboard(window.currentUser);
     } catch (error) {
@@ -505,7 +524,7 @@ document.getElementById('saveCameraAchievement').addEventListener('click', async
         return;
     }
 
-    const sets = parseInt(document.getElementById('cameraSets').value);
+    const sets = window.cameraExerciseData.getSets();
     const weight = parseFloat(document.getElementById('cameraWeight').value);
     
     if (!weight || weight <= 0) {
@@ -513,8 +532,8 @@ document.getElementById('saveCameraAchievement').addEventListener('click', async
         return;
     }
 
-    if (sets <= 0) {
-        alert('No sets detected yet. Perform the exercise first!');
+    if (sets.length === 0) {
+        alert('No sets logged yet. Perform the exercise first!');
         return;
     }
 
@@ -707,6 +726,64 @@ window.firebaseSignOut = async () => {
         alert('Failed to sign out: ' + error.message);
     }
 };
+
+function resetManualSets() {
+    const container = document.getElementById('manualSetsContainer');
+    container.innerHTML = `
+        <div class="manual-set-row">
+            <span class="set-number">Set 1:</span>
+            <input type="number" class="manual-reps-input" placeholder="Reps" min="1" required>
+            <button type="button" class="remove-set-btn" onclick="removeManualSet(this)">×</button>
+        </div>
+    `;
+    updateManualTotal();
+}
+
+document.getElementById('addManualSet').addEventListener('click', () => {
+    const container = document.getElementById('manualSetsContainer');
+    const setNumber = container.children.length + 1;
+    
+    const setRow = document.createElement('div');
+    setRow.className = 'manual-set-row';
+    setRow.innerHTML = `
+        <span class="set-number">Set ${setNumber}:</span>
+        <input type="number" class="manual-reps-input" placeholder="Reps" min="1" required>
+        <button type="button" class="remove-set-btn" onclick="removeManualSet(this)">×</button>
+    `;
+    
+    container.appendChild(setRow);
+    
+    setRow.querySelector('.manual-reps-input').addEventListener('input', updateManualTotal);
+});
+
+window.removeManualSet = function(button) {
+    const container = document.getElementById('manualSetsContainer');
+    if (container.children.length > 1) {
+        button.parentElement.remove();
+        
+        Array.from(container.children).forEach((row, index) => {
+            row.querySelector('.set-number').textContent = `Set ${index + 1}:`;
+        });
+        
+        updateManualTotal();
+    }
+};
+
+function updateManualTotal() {
+    const inputs = document.querySelectorAll('.manual-reps-input');
+    let total = 0;
+    inputs.forEach(input => {
+        const value = parseInt(input.value) || 0;
+        total += value;
+    });
+    document.getElementById('manualTotalReps').textContent = total;
+}
+
+document.addEventListener('input', (e) => {
+    if (e.target.classList.contains('manual-reps-input')) {
+        updateManualTotal();
+    }
+});
 
 if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
