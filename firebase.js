@@ -105,11 +105,22 @@ function updateRecordDisplay(exercise, achievement) {
     if (achievement) {
         const weight = achievement.weight || 0;
         const sets = achievement.sets || [];
-        const totalReps = sets.reduce((sum, set) => sum + (set.reps || 0), 0);
+        
+        let totalReps = 0;
+        let numSets = 0;
+        
+        if (Array.isArray(sets)) {
+            totalReps = sets.reduce((sum, set) => sum + (set.reps || 0), 0);
+            numSets = sets.length;
+        } else if (typeof sets === 'number') {
+            numSets = sets;
+            totalReps = achievement.totalReps || sets;
+        }
+        
         const totalVolume = weight * totalReps;
         
         document.getElementById(statsId).textContent = 
-            `${weight} lbs × ${totalReps} reps (${sets.length} sets)`;
+            `${weight} lbs × ${totalReps} reps (${numSets} sets)`;
         document.getElementById(volumeId).textContent = 
             `${totalVolume.toLocaleString()} lbs total`;
     } else {
@@ -137,7 +148,7 @@ async function saveAchievement(user, exercise, weight, sets) {
         const currentData = userDoc.data();
         const currentAchievements = currentData.achievements || {};
         
-        if (!currentAchievements[exercise] || totalVolume > currentAchievements[exercise].totalVolume) {
+        if (!currentAchievements[exercise] || totalVolume > (currentAchievements[exercise].totalVolume || 0)) {
             currentAchievements[exercise] = achievementData;
             
             await setDoc(userDocRef, {
@@ -229,7 +240,13 @@ function displayLeaderboardForExercise(exercise, users) {
                     const ach = user.achievements[ex];
                     const weight = ach.weight || 0;
                     const sets = ach.sets || [];
-                    const reps = sets.reduce((sum, set) => sum + (set.reps || 0), 0);
+                    
+                    let reps = 0;
+                    if (Array.isArray(sets)) {
+                        reps = sets.reduce((sum, set) => sum + (set.reps || 0), 0);
+                    } else if (typeof sets === 'number') {
+                        reps = ach.totalReps || sets;
+                    }
                     
                     totalVolume += weight * reps;
                     totalReps += reps;
@@ -254,7 +271,14 @@ function displayLeaderboardForExercise(exercise, users) {
                 const ach = user.achievements[exerciseKey];
                 const weight = ach.weight || 0;
                 const sets = ach.sets || [];
-                const totalReps = sets.reduce((sum, set) => sum + (set.reps || 0), 0);
+                
+                let totalReps = 0;
+                if (Array.isArray(sets)) {
+                    totalReps = sets.reduce((sum, set) => sum + (set.reps || 0), 0);
+                } else if (typeof sets === 'number') {
+                    totalReps = ach.totalReps || sets;
+                }
+                
                 const totalVolume = weight * totalReps;
                 
                 data.push({
@@ -305,7 +329,14 @@ function updateStatsFromFirestore(users) {
                 const ach = user.achievements[exercise];
                 const weight = ach.weight || 0;
                 const sets = ach.sets || [];
-                const reps = sets.reduce((sum, set) => sum + (set.reps || 0), 0);
+                
+                let reps = 0;
+                if (Array.isArray(sets)) {
+                    reps = sets.reduce((sum, set) => sum + (set.reps || 0), 0);
+                } else if (typeof sets === 'number') {
+                    reps = ach.totalReps || sets;
+                }
+                
                 const volume = weight * reps;
                 
                 totalVolume += volume;
