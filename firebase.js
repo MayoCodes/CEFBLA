@@ -103,10 +103,14 @@ function updateRecordDisplay(exercise, achievement) {
     const volumeId = exercise === 'benchpress' ? 'benchVolume' : `${exercise}Volume`;
 
     if (achievement) {
+        const weight = achievement.weight || 0;
+        const sets = achievement.sets || 0;
+        const totalWeight = achievement.totalWeight || (weight * sets);
+        
         document.getElementById(statsId).textContent = 
-            `${achievement.weight} lbs × ${achievement.sets} sets`;
+            `${weight} lbs × ${sets} sets`;
         document.getElementById(volumeId).textContent = 
-            `${achievement.totalWeight.toLocaleString()} lbs total`;
+            `${totalWeight.toLocaleString()} lbs total`;
     } else {
         document.getElementById(statsId).textContent = 'Not logged';
         document.getElementById(volumeId).textContent = '-';
@@ -219,9 +223,14 @@ function displayLeaderboardForExercise(exercise, users) {
 
             ['squat', 'deadlift', 'benchpress'].forEach(ex => {
                 if (user.achievements[ex]) {
-                    totalWeight += user.achievements[ex].totalWeight;
-                    totalWeightVal += user.achievements[ex].weight;
-                    totalSets += user.achievements[ex].sets;
+                    const ach = user.achievements[ex];
+                    const weight = ach.weight || 0;
+                    const sets = ach.sets || 0;
+                    const achTotalWeight = ach.totalWeight || (weight * sets);
+                    
+                    totalWeight += achTotalWeight;
+                    totalWeightVal += weight;
+                    totalSets += sets;
                 }
             });
 
@@ -240,11 +249,15 @@ function displayLeaderboardForExercise(exercise, users) {
         users.forEach(user => {
             if (user.achievements[exerciseKey]) {
                 const ach = user.achievements[exerciseKey];
+                const weight = ach.weight || 0;
+                const sets = ach.sets || 0;
+                const totalWeight = ach.totalWeight || (weight * sets);
+                
                 data.push({
                     name: user.displayName,
-                    weight: ach.weight,
-                    sets: ach.sets,
-                    totalWeight: ach.totalWeight
+                    weight: weight,
+                    sets: sets,
+                    totalWeight: totalWeight
                 });
             }
         });
@@ -262,7 +275,7 @@ function displayLeaderboardForExercise(exercise, users) {
             <td>${item.name}</td>
             <td>${item.weight} lbs</td>
             <td>${item.sets}</td>
-            <td class="total-weight">${item.totalWeight.toLocaleString()} lbs</td>
+            <td class="total-weight">${(item.totalWeight || 0).toLocaleString()} lbs</td>
         `;
         tbody.appendChild(row);
     });
@@ -285,9 +298,14 @@ function updateStatsFromFirestore(users) {
     users.forEach(user => {
         ['squat', 'deadlift', 'benchpress'].forEach(exercise => {
             if (user.achievements[exercise]) {
-                totalVolume += user.achievements[exercise].totalWeight;
+                const ach = user.achievements[exercise];
+                const weight = ach.weight || 0;
+                const sets = ach.sets || 0;
+                const achTotalWeight = ach.totalWeight || (weight * sets);
+                
+                totalVolume += achTotalWeight;
                 exerciseCounts[exercise]++;
-                exerciseVolumes[exercise] += user.achievements[exercise].totalWeight;
+                exerciseVolumes[exercise] += achTotalWeight;
             }
         });
     });
