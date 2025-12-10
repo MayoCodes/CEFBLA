@@ -104,24 +104,23 @@ function updateRecordDisplay(exercise, achievement) {
 
     if (achievement) {
         document.getElementById(statsId).textContent = 
-            `${achievement.weight} lbs × ${achievement.sets} sets × ${achievement.reps} reps`;
+            `${achievement.weight} lbs × ${achievement.sets} sets`;
         document.getElementById(volumeId).textContent = 
-            `${achievement.totalVolume.toLocaleString()} lbs total`;
+            `${achievement.totalWeight.toLocaleString()} lbs total`;
     } else {
         document.getElementById(statsId).textContent = 'Not logged';
         document.getElementById(volumeId).textContent = '-';
     }
 }
 
-async function saveAchievement(user, exercise, weight, sets, reps) {
-    const totalVolume = weight * sets * reps;
+async function saveAchievement(user, exercise, weight, sets) {
+    const totalWeight = weight * sets;
     const userDocRef = doc(db, 'users', user.uid);
 
     const achievementData = {
         weight: weight,
         sets: sets,
-        reps: reps,
-        totalVolume: totalVolume,
+        totalWeight: totalWeight,
         timestamp: serverTimestamp()
     };
 
@@ -131,7 +130,7 @@ async function saveAchievement(user, exercise, weight, sets, reps) {
         const currentData = userDoc.data();
         const currentAchievements = currentData.achievements || {};
         
-        if (!currentAchievements[exercise] || totalVolume > currentAchievements[exercise].totalVolume) {
+        if (!currentAchievements[exercise] || totalWeight > currentAchievements[exercise].totalWeight) {
             currentAchievements[exercise] = achievementData;
             
             await setDoc(userDocRef, {
@@ -214,27 +213,24 @@ function displayLeaderboardForExercise(exercise, users) {
 
     if (exercise === 'overall') {
         users.forEach(user => {
-            let totalVolume = 0;
             let totalWeight = 0;
+            let totalWeightVal = 0;
             let totalSets = 0;
-            let totalReps = 0;
 
             ['squat', 'deadlift', 'benchpress'].forEach(ex => {
                 if (user.achievements[ex]) {
-                    totalVolume += user.achievements[ex].totalVolume;
-                    totalWeight += user.achievements[ex].weight;
+                    totalWeight += user.achievements[ex].totalWeight;
+                    totalWeightVal += user.achievements[ex].weight;
                     totalSets += user.achievements[ex].sets;
-                    totalReps += user.achievements[ex].reps;
                 }
             });
 
-            if (totalVolume > 0) {
+            if (totalWeight > 0) {
                 data.push({
                     name: user.displayName,
-                    weight: totalWeight,
+                    weight: totalWeightVal,
                     sets: totalSets,
-                    reps: totalReps,
-                    totalVolume: totalVolume
+                    totalWeight: totalWeight
                 });
             }
         });
@@ -248,14 +244,13 @@ function displayLeaderboardForExercise(exercise, users) {
                     name: user.displayName,
                     weight: ach.weight,
                     sets: ach.sets,
-                    reps: ach.reps,
-                    totalVolume: ach.totalVolume
+                    totalWeight: ach.totalWeight
                 });
             }
         });
     }
 
-    data.sort((a, b) => b.totalVolume - a.totalVolume);
+    data.sort((a, b) => b.totalWeight - a.totalWeight);
 
     tbody.innerHTML = '';
     data.forEach((item, index) => {
@@ -267,14 +262,13 @@ function displayLeaderboardForExercise(exercise, users) {
             <td>${item.name}</td>
             <td>${item.weight} lbs</td>
             <td>${item.sets}</td>
-            <td>${item.reps}</td>
-            <td class="total-weight">${item.totalVolume.toLocaleString()} lbs</td>
+            <td class="total-weight">${item.totalWeight.toLocaleString()} lbs</td>
         `;
         tbody.appendChild(row);
     });
 
     if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; color: #888888; padding: 3rem;">No achievements logged yet. Be the first!</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align: center; color: #888888; padding: 3rem;">No achievements logged yet. Be the first!</td></tr>';
     }
 }
 
@@ -291,9 +285,9 @@ function updateStatsFromFirestore(users) {
     users.forEach(user => {
         ['squat', 'deadlift', 'benchpress'].forEach(exercise => {
             if (user.achievements[exercise]) {
-                totalVolume += user.achievements[exercise].totalVolume;
+                totalVolume += user.achievements[exercise].totalWeight;
                 exerciseCounts[exercise]++;
-                exerciseVolumes[exercise] += user.achievements[exercise].totalVolume;
+                exerciseVolumes[exercise] += user.achievements[exercise].totalWeight;
             }
         });
     });
@@ -458,14 +452,13 @@ document.getElementById('dashboardAchievementForm').addEventListener('submit', a
     const exercise = document.getElementById('dashboardExercise').value;
     const weight = parseFloat(document.getElementById('dashboardWeight').value);
     const sets = parseInt(document.getElementById('dashboardSets').value);
-    const reps = parseInt(document.getElementById('dashboardReps').value);
     const btn = e.target.querySelector('.auth-btn');
 
     btn.disabled = true;
     btn.textContent = 'Saving...';
 
     try {
-        const isNewRecord = await saveAchievement(window.currentUser, exercise, weight, sets, reps);
+        const isNewRecord = await saveAchievement(window.currentUser, exercise, weight, sets);
         
         const successMsg = document.getElementById('successMessageDashboard');
         if (isNewRecord) {
@@ -494,17 +487,16 @@ document.getElementById('saveCameraAchievement').addEventListener('click', async
         return;
     }
 
-    const reps = parseInt(document.getElementById('cameraRepsInput').value);
-    const weight = parseFloat(document.getElementById('cameraWeight').value);
     const sets = parseInt(document.getElementById('cameraSets').value);
+    const weight = parseFloat(document.getElementById('cameraWeight').value);
     
     if (!weight || weight <= 0) {
         alert('Please enter the weight you lifted');
         return;
     }
 
-    if (reps <= 0) {
-        alert('No reps detected yet. Perform the exercise first!');
+    if (sets <= 0) {
+        alert('No sets detected yet. Perform the exercise first!');
         return;
     }
 
@@ -520,7 +512,7 @@ document.getElementById('saveCameraAchievement').addEventListener('click', async
         };
         
         const exercise = exerciseMap[window.cameraExerciseData.getCurrentExercise()];
-        const isNewRecord = await saveAchievement(window.currentUser, exercise, weight, sets, reps);
+        const isNewRecord = await saveAchievement(window.currentUser, exercise, weight, sets);
         
         const successMsg = document.getElementById('successMessageDashboard');
         if (isNewRecord) {
@@ -532,10 +524,7 @@ document.getElementById('saveCameraAchievement').addEventListener('click', async
         setTimeout(() => successMsg.classList.remove('show'), 3000);
 
         window.cameraExerciseData.reset();
-        currentSets = 1;
-        updateSetsDisplay();
         document.getElementById('cameraWeight').value = '';
-        document.getElementById('cameraSets').value = '1';
 
         await loadUserDashboard(window.currentUser);
     } catch (error) {

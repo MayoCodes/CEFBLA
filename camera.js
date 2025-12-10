@@ -1,7 +1,6 @@
-import { PoseLandmarker, HandLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
+import { PoseLandmarker, FilesetResolver } from 'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.14';
 
 let poseLandmarker;
-let handLandmarker;
 let webcamRunning = false;
 let lastVideoTime = -1;
 
@@ -10,17 +9,12 @@ let canvas = document.getElementById('cameraCanvas');
 let ctx;
 
 let currentCameraExercise = 'squat';
-let cameraCount = 0;
-let currentSets = 1;
+let setsCompleted = 0;
 let isDown = false;
 let currentAngle = 0;
 let repDetected = false;
 let repDetectedTime = 0;
 let lastRepTime = 0;
-
-let palmRaised = false;
-let lastPalmTime = 0;
-const PALM_COOLDOWN = 2000;
 
 let angleHistory = [];
 const SMOOTHING_WINDOW = 5;
@@ -60,15 +54,6 @@ window.initializeCamera = async function() {
             numPoses: 1
         });
         
-        handLandmarker = await HandLandmarker.createFromOptions(vision, {
-            baseOptions: {
-                modelAssetPath: "https://storage.googleapis.com/mediapipe-models/hand_landmarker/hand_landmarker/float16/1/hand_landmarker.task",
-                delegate: "GPU"
-            },
-            runningMode: "VIDEO",
-            numHands: 2
-        });
-        
         document.getElementById('cameraStatus').textContent = 'Starting camera...';
         
         const constraints = {
@@ -83,7 +68,7 @@ window.initializeCamera = async function() {
         
         video.addEventListener('loadeddata', () => {
             webcamRunning = true;
-            document.getElementById('cameraStatus').textContent = 'Ready! Raise palm for new set.';
+            document.getElementById('cameraStatus').textContent = 'Ready! Start lifting.';
             predictWebcam();
         });
     } catch (error) {
@@ -102,8 +87,6 @@ async function predictWebcam() {
         try {
             const poseResults = await poseLandmarker.detectForVideo(video, startTimeMs);
             
-            const handResults = await handLandmarker.detectForVideo(video, startTimeMs);
-            
             ctx.save();
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
@@ -113,10 +96,6 @@ async function predictWebcam() {
                 drawLandmarks(landmarks);
                 countExercise(landmarks);
                 drawDebug(landmarks);
-            }
-            
-            if (handResults.landmarks && handResults.landmarks.length > 0) {
-                detectPalmGesture(handResults.landmarks);
             }
             
             ctx.restore();
@@ -132,47 +111,8 @@ async function predictWebcam() {
     window.requestAnimationFrame(predictWebcam);
 }
 
-function detectPalmGesture(handsLandmarks) {
-    if (Date.now() - lastPalmTime < PALM_COOLDOWN) return;
-    
-    for (const handLandmarks of handsLandmarks) {
-        const wrist = handLandmarks[0];
-        const thumbTip = handLandmarks[4];
-        const indexTip = handLandmarks[8];
-        const middleTip = handLandmarks[12];
-        const ringTip = handLandmarks[16];
-        const pinkyTip = handLandmarks[20];
-        
-        const fingersUp = 
-            indexTip.y < wrist.y &&
-            middleTip.y < wrist.y &&
-            ringTip.y < wrist.y &&
-            pinkyTip.y < wrist.y &&
-            thumbTip.y < wrist.y;
-        
-        if (fingersUp && !palmRaised) {
-            palmRaised = true;
-            lastPalmTime = Date.now();
-            
-            currentSets++;
-            cameraCount = 0;
-            updateCameraCount();
-            updateSetsDisplay();
-            
-            document.getElementById('cameraStatus').textContent = 'SET ' + currentSets + ' STARTED! Reps reset.';
-            setTimeout(() => {
-                document.getElementById('cameraStatus').textContent = 'Ready! Raise palm for new set.';
-            }, 2000);
-            
-            console.log('Palm detected! Set incremented to:', currentSets);
-        } else if (!fingersUp) {
-            palmRaised = false;
-        }
-    }
-}
-
 function updateSetsDisplay() {
-    document.getElementById('cameraSets').value = currentSets;
+    document.getElementById('cameraSets').value = setsCompleted;
 }
 
 function drawLandmarks(landmarks) {
@@ -263,8 +203,9 @@ function countSquat(landmarks) {
         isDown = true;
     } else if (smoothedAngle > SQUAT_KNEE_UP && isDown) {
         isDown = false;
-        cameraCount++;
+        setsCompleted++;
         updateCameraCount();
+        updateSetsDisplay();
         repDetected = true;
         repDetectedTime = Date.now();
         lastRepTime = Date.now();
@@ -293,8 +234,9 @@ function countBenchPress(landmarks) {
         isDown = true;
     } else if (smoothedAngle > BENCH_ELBOW_UP && isDown) {
         isDown = false;
-        cameraCount++;
+        setsCompleted++;
         updateCameraCount();
+        updateSetsDisplay();
         repDetected = true;
         repDetectedTime = Date.now();
         lastRepTime = Date.now();
@@ -321,8 +263,9 @@ function countDeadlift(landmarks) {
         isDown = true;
     } else if (smoothedDistance < DEADLIFT_WRIST_UP && isDown) {
         isDown = false;
-        cameraCount++;
+        setsCompleted++;
         updateCameraCount();
+        updateSetsDisplay();
         repDetected = true;
         repDetectedTime = Date.now();
         lastRepTime = Date.now();
@@ -331,8 +274,7 @@ function countDeadlift(landmarks) {
 
 
 function updateCameraCount() {
-    document.getElementById('cameraCount').textContent = cameraCount;
-    document.getElementById('cameraRepsInput').value = cameraCount;
+    document.getElementById('cameraCount').textContent = setsCompleted;
 }
 
 function drawDebug(landmarks) {
@@ -341,7 +283,7 @@ function drawDebug(landmarks) {
         <div style="color: white; font-size: 11px;">
             <strong>Angle:</strong> ${currentAngle.toFixed(1)}°<br>
             <strong>State:</strong> ${isDown ? 'DOWN' : 'UP'}<br>
-            <strong>Reps:</strong> ${cameraCount}
+            <strong>Sets:</strong> ${setsCompleted}
         </div>
     `;
     
@@ -384,8 +326,7 @@ document.getElementById('cameraDeadliftBtn').addEventListener('click', () => {
 });
 
 document.getElementById('cameraResetBtn').addEventListener('click', () => {
-    cameraCount = 0;
-    currentSets = 1;
+    setsCompleted = 0;
     isDown = false;
     lastRepTime = 0;
     angleHistory = [];
@@ -415,10 +356,11 @@ document.querySelectorAll('.method-tab').forEach(tab => {
 
 window.cameraExerciseData = {
     getCurrentExercise: () => currentCameraExercise,
-    getCount: () => cameraCount,
+    getSets: () => setsCompleted,
     reset: () => {
-        cameraCount = 0;
+        setsCompleted = 0;
         updateCameraCount();
+        updateSetsDisplay();
     }
 };
 

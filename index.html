@@ -80,8 +80,7 @@
                             <th>Participant</th>
                             <th>Weight (lbs)</th>
                             <th>Sets</th>
-                            <th>Reps</th>
-                            <th>Total Volume</th>
+                            <th>Total Weight</th>
                         </tr>
                     </thead>
                     <tbody id="leaderboardBody">
@@ -91,39 +90,39 @@
         </div>
     </section>
 
-    <section class="leaderboard-section scroll-animate" style="background: linear-gradient(rgba(10, 10, 10, 0.9), rgba(10, 10, 10, 0.9)), url('https://images.unsplash.com/photo-1571902943202-507ec2618e8f?w=1600&q=80') center/cover fixed;">
-        <div class="leaderboard-container" style="max-width: 900px;">
-            <h2 class="section-title" style="text-align: left; margin-bottom: 2.5rem;">WHY JOIN</h2>
-            <div style="display: flex; flex-direction: column; gap: 3rem;">
-                <div style="display: flex; gap: 2rem; align-items: flex-start;">
+    <section class="leaderboard-section scroll-animate why-join-section">
+        <div class="leaderboard-container why-join-container">
+            <h2 class="section-title why-join-title">WHY JOIN</h2>
+            <div class="why-join-grid">
+                <div class="why-join-item">
                     <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=400&h=300&fit=crop&q=80" 
-                         style="width: 220px; height: 160px; object-fit: cover; border: 3px solid rgba(230, 57, 70, 0.5);" alt="Gym">
+                         class="why-join-img" alt="Gym">
                     <div>
-                        <h3 style="font-size: 1.6rem; color: #e63946; margin-bottom: 1rem; letter-spacing: 2px;">TEST YOUR LIMITS</h3>
-                        <p style="color: #bbb; line-height: 1.8; font-size: 1.05rem;">
-                            Push beyond what you thought possible. Track every lift. See measurable progress. Compete against yourself and others.
+                        <h3 class="why-join-heading red-heading">TEST YOUR LIMITS</h3>
+                        <p class="why-join-text">
+                            Push beyond what you thought possible and compete against people around the world to reach your full potential.
                         </p>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 2rem; align-items: flex-start; flex-direction: row-reverse;">
+                <div class="why-join-item reverse-item">
                     <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=400&h=300&fit=crop&q=80" 
-                         style="width: 220px; height: 160px; object-fit: cover; border: 3px solid rgba(247, 127, 0, 0.5);" alt="Powerlifting">
-                    <div style="text-align: right;">
-                        <h3 style="font-size: 1.6rem; color: #f77f00; margin-bottom: 1rem; letter-spacing: 2px;">REAL COMPETITION</h3>
-                        <p style="color: #bbb; line-height: 1.8; font-size: 1.05rem;">
-                            No fake numbers. No shortcuts. Just you, the barbell, and the truth. Live leaderboards update as lifts are logged.
+                         class="why-join-img" alt="Powerlifting">
+                    <div class="why-join-text-right">
+                        <h3 class="why-join-heading orange-heading">LIVE COMPETITION</h3>
+                        <p class="why-join-text">
+                            Everything is updated in real-time so you can alwasy see how you stack against the competition
                         </p>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 2rem; align-items: flex-start;">
+                <div class="why-join-item">
                     <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=400&h=300&fit=crop&q=80" 
-                         style="width: 220px; height: 160px; object-fit: cover; border: 3px solid rgba(6, 255, 165, 0.5);" alt="Training">
+                         class="why-join-img" alt="Training">
                     <div>
-                        <h3 style="font-size: 1.6rem; color: #06ffa5; margin-bottom: 1rem; letter-spacing: 2px;">TRACK EVERYTHING</h3>
-                        <p style="color: #bbb; line-height: 1.8; font-size: 1.05rem;">
-                            AI-powered rep counting or manual logging. Your choice. Weight, sets, reps - all tracked automatically.
+                        <h3 class="why-join-heading green-heading">TRACK EVERYTHING</h3>
+                        <p class="why-join-text">
+                            Using MediaPipe Pose Landmarker we are able to minmize manual logging as much as possible. Let us do the counting for you.
                         </p>
                     </div>
                 </div>
@@ -131,49 +130,42 @@
         </div>
     </section>
 
-    <section class="stats-section scroll-animate" style="background: linear-gradient(rgba(17, 17, 17, 0.9), rgba(17, 17, 17, 0.9)), url('https://images.unsplash.com/photo-1554284126-aa88f22d8b74?w=1600&q=80') center/cover fixed;">
-        <div class="stats-container" style="max-width: 1000px;">
-            <h2 class="section-title" style="margin-bottom: 3rem;">THE PROCESS</h2>
+    <section class="stats-section scroll-animate process-section">
+        <div class="stats-container process-container">
+            <h2 class="section-title process-title">THE PROCESS</h2>
             
-            <div style="background: rgba(26, 26, 26, 0.7); padding: 3rem; border: 3px solid rgba(255, 255, 255, 0.15);">
-                <div style="display: grid; grid-template-columns: 80px 1fr; gap: 2rem; align-items: start; margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                    <div style="font-size: 3.5rem; color: #e63946; font-weight: bold; line-height: 1;">01</div>
+            <div class="process-box">
+                <div class="process-step">
+                    <div class="process-number red-number">01</div>
                     <div>
-                        <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 0.75rem; letter-spacing: 2px;">SIGN UP</h3>
-                        <p style="color: #999; line-height: 1.7;">Create your account. Takes 30 seconds. Email or Google. Thats it.</p>
+                        <h3 class="process-step-title">SIGN UP</h3>
+                        <p class="process-step-text">Create your account. Takes 30 seconds. Email or Google. Thats it.</p>
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 80px 1fr; gap: 2rem; align-items: start; margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                    <div style="font-size: 3.5rem; color: #f77f00; font-weight: bold; line-height: 1;">02</div>
+                <div class="process-step">
+                    <div class="process-number orange-number">02</div>
                     <div>
-                        <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 0.75rem; letter-spacing: 2px;">LIFT</h3>
-                        <p style="color: #999; line-height: 1.7;">Squat, deadlift, bench press. Hit the weights. Push your limits.</p>
+                        <h3 class="process-step-title">LIFT</h3>
+                        <p class="process-step-text">Squat, deadlift, bench press. Hit the weights. Push your limits.</p>
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 80px 1fr; gap: 2rem; align-items: start; margin-bottom: 3rem; padding-bottom: 2rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                    <div style="font-size: 3.5rem; color: #06ffa5; font-weight: bold; line-height: 1;">03</div>
+                <div class="process-step">
+                    <div class="process-number green-number">03</div>
                     <div>
-                        <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 0.75rem; letter-spacing: 2px;">LOG IT</h3>
-                        <p style="color: #999; line-height: 1.7;">Open dashboard. Log weight and reps. System calculates total volume.</p>
+                        <h3 class="process-step-title">LOG IT</h3>
+                        <p class="process-step-text">Open dashboard. Each rep detected counts as one set with your max weight.</p>
                     </div>
                 </div>
 
-                <div style="display: grid; grid-template-columns: 80px 1fr; gap: 2rem; align-items: start;">
-                    <div style="font-size: 3.5rem; color: #fff; font-weight: bold; line-height: 1;">04</div>
+                <div class="process-step last-step">
+                    <div class="process-number white-number">04</div>
                     <div>
-                        <h3 style="font-size: 1.4rem; color: #fff; margin-bottom: 0.75rem; letter-spacing: 2px;">COMPETE</h3>
-                        <p style="color: #999; line-height: 1.7;">Check leaderboards. See where you rank. Beat your records.</p>
+                        <h3 class="process-step-title">COMPETE</h3>
+                        <p class="process-step-text">Check leaderboards. See where you rank. Beat your records.</p>
                     </div>
                 </div>
-            </div>
-
-            <div style="text-align: center; padding: 2.5rem; background: rgba(230, 57, 70, 0.15); border: 2px dashed #e63946; margin-top: 2rem;">
-                <p style="font-size: 1.4rem; color: #e63946; letter-spacing: 2px; line-height: 1.8;">
-                    VOLUME = WEIGHT × SETS × REPS<br>
-                    <span style="font-size: 0.9rem; color: #999;">HIGHEST TOTAL VOLUME WINS</span>
-                </p>
             </div>
         </div>
     </section>
@@ -190,9 +182,9 @@
                     </div>
                 </div>
                 <div class="stat-card">
-                    <h3>Total Volume Lifted</h3>
+                    <h3>Total Weight Lifted</h3>
                     <div class="stat-value" id="totalVolume">0</div>
-                    <p style="color: #999; font-size: 0.875rem; margin-top: 0.5rem;">pounds across all exercises</p>
+                    <p class="stats-subtitle">pounds across all exercises</p>
                 </div>
                 <div class="stat-card">
                     <h3>Exercise Distribution</h3>
@@ -253,13 +245,13 @@
                                 <button id="cameraSquatBtn" class="active">Squat</button>
                                 <button id="cameraBenchBtn">Bench Press</button>
                                 <button id="cameraDeadliftBtn">Deadlift</button>
-                                <button id="cameraResetBtn" style="margin-left: auto;">Reset</button>
+                                <button id="cameraResetBtn" class="camera-reset-btn">Reset</button>
                             </div>
 
                             <div id="cameraStats">
                                 <div class="exercise-label" id="cameraExerciseLabel">SQUAT</div>
                                 <div class="count-display" id="cameraCount">0</div>
-                                <div style="font-size: 0.75rem; color: #666; margin-top: 0.5rem;">Reps Detected</div>
+                                <div class="reps-detected-label">Sets Completed</div>
                             </div>
 
                             <div id="cameraVideoContainer">
@@ -269,31 +261,19 @@
                             </div>
 
                             <div id="cameraStatus">Loading AI model...</div>
-                            
-                            <div style="margin-top: 1rem; padding: 1rem; background: rgba(230, 57, 70, 0.1); border: 2px dashed rgba(230, 57, 70, 0.3); border-radius: 4px; text-align: center;">
-                                <div style="font-size: 0.875rem; color: #e63946; font-weight: bold; margin-bottom: 0.5rem;">RAISE PALM TO ADD SET</div>
-                                <div style="font-size: 0.75rem; color: #999;">Show palm like high-five to increment sets and reset reps</div>
-                            </div>
                         </div>
 
                         <div class="camera-section">
-                            <h4 style="font-size: 1.1rem; margin-bottom: 1rem; color: #fff;">Save Your Set</h4>
+                            <h4 class="save-set-title">Save Your Sets</h4>
                             
                             <div class="form-group">
-                                <label>Detected Reps (editable)</label>
-                                <input type="number" id="cameraRepsInput" value="0" min="0"
-                                       style="background: rgba(15, 15, 15, 0.8); border: 2px solid rgba(230, 57, 70, 0.3);">
-                            </div>
-
-                            <div class="form-group">
-                                <label for="cameraWeight">Weight (lbs)</label>
+                                <label for="cameraWeight">Weight per Rep (lbs)</label>
                                 <input type="number" id="cameraWeight" placeholder="0" min="0" step="0.5">
                             </div>
 
                             <div class="form-group">
-                                <label for="cameraSets">Current Sets</label>
-                                <input type="number" id="cameraSets" value="1" min="1" readonly
-                                       style="background: rgba(15, 15, 15, 0.8); border: 2px solid rgba(255, 255, 255, 0.2);">
+                                <label for="cameraSets">Sets Detected</label>
+                                <input type="number" id="cameraSets" value="0" min="0" readonly class="camera-sets-input">
                             </div>
 
                             <button type="button" class="save-camera-btn" id="saveCameraAchievement">
@@ -317,16 +297,12 @@
 
                     <div class="exercise-inputs">
                         <div class="form-group">
-                            <label for="dashboardWeight">Weight (lbs)</label>
+                            <label for="dashboardWeight">Weight per Rep (lbs)</label>
                             <input type="number" id="dashboardWeight" required placeholder="0" min="0" step="0.5">
                         </div>
                         <div class="form-group">
-                            <label for="dashboardSets">Sets</label>
+                            <label for="dashboardSets">Sets (one rep each)</label>
                             <input type="number" id="dashboardSets" required placeholder="0" min="1">
-                        </div>
-                        <div class="form-group">
-                            <label for="dashboardReps">Reps</label>
-                            <input type="number" id="dashboardReps" required placeholder="0" min="1">
                         </div>
                     </div>
 
@@ -336,7 +312,7 @@
             </div>
 
             <div class="current-achievements">
-                <h3 style="font-size: 1rem; color: #999; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem;">Current Records</h3>
+                <h3 class="current-records-title">Current Records</h3>
                 <div class="achievement-card">
                     <div>
                         <div class="exercise-name">Squat</div>
